@@ -1,7 +1,7 @@
 """
 Arabic Vocabulary App - Desktop Application (PyQt6)
 A native desktop app for learning Arabic vocabulary with Danish and English translations.
-Version: 0.1 Beta
+Version: 0.2 Beta
 """
 
 import sys
@@ -16,11 +16,11 @@ from PyQt6.QtWidgets import (
     QGridLayout, QDialog, QMessageBox, QComboBox, QSizePolicy
 )
 from PyQt6.QtCore import Qt, QSize, QPointF
-from PyQt6.QtGui import QFont, QColor, QPalette, QPainter, QPen, QBrush
+from PyQt6.QtGui import QFont, QColor, QPalette, QPainter, QPen, QBrush, QPainterPath
 import math
 
 # Version
-VERSION = "0.1 Beta"
+VERSION = "0.2 Beta"
 
 # Configuration - Store data in Documents folder
 def get_data_dir():
@@ -59,129 +59,188 @@ class GeometricPatternWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        self.pattern_color = QColor(26, 35, 50, 40)  # Subtle pattern color
         
     def paintEvent(self, event):
         """Draw the geometric pattern."""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         
-        # Background
-        painter.fillRect(self.rect(), QColor(10, 15, 26))
+        # Background - Deep Teal
+        painter.fillRect(self.rect(), QColor(6, 44, 48))
         
         # Pattern settings
-        cell_size = 80
-        pen = QPen(self.pattern_color)
-        pen.setWidth(1)
-        painter.setPen(pen)
+        cell_size = 140
         
         # Draw repeating pattern
         for x in range(-cell_size, self.width() + cell_size, cell_size):
             for y in range(-cell_size, self.height() + cell_size, cell_size):
-                self.draw_star_pattern(painter, x + cell_size // 2, y + cell_size // 2, cell_size // 2 - 5)
+                self.draw_strapwork_pattern(painter, x + cell_size // 2, y + cell_size // 2, cell_size)
     
-    def draw_star_pattern(self, painter, cx, cy, radius):
-        """Draw an 8-pointed star pattern at the given center."""
-        # Draw 8-pointed star
-        points_outer = []
-        points_inner = []
-        inner_radius = radius * 0.4
+    def draw_strapwork_pattern(self, painter, cx, cy, size):
+        """Draw an intricate 8-fold strapwork pattern."""
+        radius = size * 0.5
         
-        for i in range(8):
-            angle_outer = math.pi * i / 4 - math.pi / 2
-            angle_inner = math.pi * (i + 0.5) / 4 - math.pi / 2
+        # 8-pointed star points (Rub el Hizb style)
+        points = []
+        for i in range(16):
+            angle = math.pi * i / 8 - math.pi / 8
+            # Alternating radii for star points vs clefts
+            # Adjusted for a sharper star look similar to the image
+            r = radius * 0.85 if i % 2 == 0 else radius * 0.55
+            points.append(QPointF(
+                cx + r * math.cos(angle),
+                cy + r * math.sin(angle)
+            ))
             
-            points_outer.append(QPointF(
-                cx + radius * math.cos(angle_outer),
-                cy + radius * math.sin(angle_outer)
-            ))
-            points_inner.append(QPointF(
-                cx + inner_radius * math.cos(angle_inner),
-                cy + inner_radius * math.sin(angle_inner)
-            ))
+        # Create the star path
+        path = QPainterPath()
+        path.moveTo(points[0])
+        for i in range(1, 16):
+            path.lineTo(points[i])
+        path.closeSubpath()
         
-        # Draw the star by connecting points
-        for i in range(8):
-            next_i = (i + 1) % 8
-            painter.drawLine(points_outer[i], points_inner[i])
-            painter.drawLine(points_inner[i], points_outer[next_i])
+        # Draw "Strapwork" Effect
+        # 1. Darker backing for depth
+        painter.setPen(QPen(QColor(2, 28, 30, 80), 6)) 
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawPath(path)
         
-        # Draw center circle
-        painter.drawEllipse(QPointF(cx, cy), radius * 0.15, radius * 0.15)
+        # 2. Main Gold line
+        painter.setPen(QPen(QColor(212, 170, 80, 40), 2))
+        painter.drawPath(path)
         
-        # Draw connecting lines to adjacent cells
-        for i in range(4):
-            angle = math.pi * i / 2
-            end_x = cx + radius * 1.15 * math.cos(angle)
-            end_y = cy + radius * 1.15 * math.sin(angle)
-            painter.drawLine(QPointF(cx + radius * math.cos(angle), cy + radius * math.sin(angle)),
-                           QPointF(end_x, end_y))
+        # 3. Inner details - A smaller rotated square or circle
+        painter.setPen(QPen(QColor(212, 170, 80, 20), 1))
+        painter.drawEllipse(QPointF(cx, cy), radius * 0.25, radius * 0.25)
+        
+        # 4. Connecting lines (grid)
+        painter.setPen(QPen(QColor(212, 170, 80, 15), 1))
+        rect_r = radius * 0.95
+        painter.drawRect(int(cx - rect_r), int(cy - rect_r), int(rect_r * 2), int(rect_r * 2))
+
+
+class MedallionLogo(QWidget):
+    """A custom widget that draws a decorative Islamic medallion."""
+    
+    def __init__(self, size=64, parent=None):
+        super().__init__(parent)
+        self.setFixedSize(size, size)
+        
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        
+        cx, cy = self.width() / 2, self.height() / 2
+        radius = min(cx, cy) - 4
+        
+        # 1. Outer Star (12-pointed)
+        path = QPainterPath()
+        points = 12
+        for i in range(points * 2):
+            angle = math.pi * i / points
+            r = radius if i % 2 == 0 else radius * 0.8
+            x = cx + r * math.cos(angle)
+            y = cy + r * math.sin(angle)
+            if i == 0:
+                path.moveTo(x, y)
+            else:
+                path.lineTo(x, y)
+        path.closeSubpath()
+        
+        # Fill Green
+        painter.fillPath(path, QColor(45, 170, 120))  # Emerald Green
+        # Border Gold
+        painter.strokePath(path, QPen(QColor(212, 170, 80), 2))
+        
+        # 2. Inner interlacing lines
+        painter.setPen(QPen(QColor(255, 255, 255, 100), 1.5))
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawEllipse(QPointF(cx, cy), radius * 0.6, radius * 0.6)
+        
+        # 3. Center Gold detail
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor(212, 170, 80))
+        painter.drawEllipse(QPointF(cx, cy), radius * 0.2, radius * 0.2)
 
 
 # Stylesheet
 STYLE = """
 QMainWindow, QWidget {
-    background-color: #0a0f1a;
-    color: #e8e6e3;
+    background-color: #062C30;
+    color: #FFFFFF;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
 }
 QLabel {
-    color: #e8e6e3;
+    color: #FFFFFF;
 }
 QLineEdit, QTextEdit, QComboBox {
-    background-color: #243044;
-    border: none;
-    border-radius: 6px;
-    padding: 10px;
-    color: #e8e6e3;
+    background-color: #05363D;
+    border: 1px solid #1A5C63;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #FFFFFF;
     font-size: 14px;
+    min-height: 24px;
 }
 QLineEdit:focus, QTextEdit:focus {
-    border: 1px solid #d4a853;
+    border: 1px solid #D4AA50;
+    background-color: #08454D;
 }
 QPushButton {
-    background-color: #243044;
-    border: 2px solid #38a169;
-    border-radius: 6px;
+    background-color: #0E3F45;
+    border: 1px solid #D4AA50;
+    border-radius: 8px;
     padding: 10px 20px;
-    color: #e8e6e3;
-    font-size: 13px;
+    color: #D4AA50;
+    font-size: 14px;
+    font-weight: 600;
 }
 QPushButton:hover {
-    background-color: #3d3526;
-    border-color: #48bb78;
+    background-color: #1A5C63;
+    color: #FFFFFF;
+    border-color: #FFFFFF;
 }
 QPushButton#primaryBtn {
-    background-color: #d4a853;
-    border: 2px solid #38a169;
-    color: #ffffff;
+    background-color: #0E3F45;
+    border: 2px solid #D4AA50;
+    color: #FFFFFF;
     font-weight: bold;
+    min-height: 24px;
 }
 QPushButton#primaryBtn:hover {
-    background-color: #c49a4a;
-    border-color: #48bb78;
+    background-color: #1A5C63;
+    border-color: #FFFFFF;
+    color: #FFFFFF;
 }
 QPushButton#dangerBtn {
-    border: 2px solid #e53e3e;
+    border: 1px solid #D64541;
+    color: #D64541;
 }
 QPushButton#dangerBtn:hover {
-    background-color: #e53e3e;
-    border-color: #fc8181;
+    background-color: #D64541;
+    color: #FFFFFF;
 }
 QScrollArea {
     border: none;
-    background-color: #0a0f1a;
+    background-color: transparent;
 }
 QComboBox {
     padding: 8px;
+    border: 1px solid #D4AA50;
+    color: #D4AA50;
 }
 QComboBox::drop-down {
     border: none;
     padding-right: 10px;
 }
 QComboBox QAbstractItemView {
-    background-color: #1a2332;
-    color: #e8e6e3;
-    selection-background-color: #3d3526;
+    background-color: #0E3F45;
+    color: #FDF6E3;
+    selection-background-color: #1A5C63;
+    border: 1px solid #D4AA50;
+}
+QDialog {
+    background-color: #062C30;
 }
 """
 
@@ -264,7 +323,7 @@ class ArabicKeyboard(QDialog):
         self.target_entry = target_entry
         self.setWindowTitle("Arabic Keyboard")
         self.setFixedSize(850, 420)
-        self.setStyleSheet("background-color: #1a2332;")
+        self.setStyleSheet("background-color: #062C30;")
         
         layout = QVBoxLayout(self)
         layout.setSpacing(5)
@@ -279,14 +338,15 @@ class ArabicKeyboard(QDialog):
                 btn.setFont(QFont('Arial', 26))
                 btn.setStyleSheet("""
                     QPushButton {
-                        background-color: #243044;
-                        color: #e8e6e3;
-                        border-radius: 4px;
-                        border: 1px solid #38a169;
+                        background-color: #0E3F45;
+                        color: #FDF6E3;
+                        border-radius: 8px;
+                        border: 1px solid #1A5C63;
                     }
                     QPushButton:hover {
-                        background-color: #3d3526;
-                        color: #d4a853;
+                        background-color: #1A5C63;
+                        color: #D4AA50;
+                        border-color: #D4AA50;
                     }
                 """)
                 btn.clicked.connect(lambda checked, c=char: self.insert_char(c))
@@ -324,13 +384,14 @@ class ArabicKeyboard(QDialog):
             btn.setFont(QFont('Arial', 38))
             btn.setStyleSheet("""
                 QPushButton {
-                    background-color: #243044;
-                    color: #d4a853;
-                    border-radius: 4px;
-                    border: 1px solid #38a169;
+                    background-color: #0E3F45;
+                    color: #D4AA50;
+                    border-radius: 8px;
+                    border: 1px solid #1A5C63;
                 }
                 QPushButton:hover {
-                    background-color: #3d3526;
+                    background-color: #1A5C63;
+                    border-color: #D4AA50;
                 }
             """)
             btn.clicked.connect(lambda checked, c=char: self.insert_char(c))
@@ -371,8 +432,9 @@ class WordCard(QFrame):
         
         self.setStyleSheet("""
             WordCard {
-                background-color: #1a2332;
-                border-radius: 12px;
+                background-color: #0E3F45;
+                border-radius: 16px;
+                border: 1px solid #1A5C63;
                 padding: 15px;
             }
         """)
@@ -387,27 +449,27 @@ class WordCard(QFrame):
         arabic_text = word.get('arabic_diacritics') or word.get('arabic', '')
         arabic_label = QLabel(arabic_text)
         arabic_label.setFont(QFont('Arial', 32))
-        arabic_label.setStyleSheet("color: #d4a853;")
+        arabic_label.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
         arabic_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(arabic_label)
         
         # Transliteration
         if word.get('transliteration'):
             trans_label = QLabel(word['transliteration'])
-            trans_label.setStyleSheet("color: #8b9bb4; font-style: italic;")
+            trans_label.setStyleSheet("color: #A0C4C8; font-style: italic;")
             trans_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             layout.addWidget(trans_label)
         
         # Translations frame
         trans_frame = QFrame()
-        trans_frame.setStyleSheet("background-color: #243044; border-radius: 8px; padding: 10px;")
+        trans_frame.setStyleSheet("background-color: #05363D; border-radius: 8px; padding: 10px;")
         trans_layout = QVBoxLayout(trans_frame)
         trans_layout.setSpacing(5)
         
         # English
         en_row = QHBoxLayout()
         en_label = QLabel("EN")
-        en_label.setStyleSheet("color: #2d9596; font-weight: bold; font-size: 11px;")
+        en_label.setStyleSheet("color: #38B2AC; font-weight: bold; font-size: 11px;")
         en_label.setFixedWidth(30)
         en_row.addWidget(en_label)
         en_text = QLabel(word.get('english', ''))
@@ -418,7 +480,7 @@ class WordCard(QFrame):
         # Danish
         da_row = QHBoxLayout()
         da_label = QLabel("DA")
-        da_label.setStyleSheet("color: #2d9596; font-weight: bold; font-size: 11px;")
+        da_label.setStyleSheet("color: #38B2AC; font-weight: bold; font-size: 11px;")
         da_label.setFixedWidth(30)
         da_row.addWidget(da_label)
         da_text = QLabel(word.get('danish', ''))
@@ -434,11 +496,12 @@ class WordCard(QFrame):
             for tag in word['tags']:
                 tag_label = QLabel(tag)
                 tag_label.setStyleSheet("""
-                    background-color: #3d3526;
-                    color: #d4a853;
+                    background-color: #062C30;
+                    color: #D4AA50;
                     padding: 3px 8px;
                     border-radius: 4px;
                     font-size: 11px;
+                    border: 1px solid #1A5C63;
                 """)
                 tags_layout.addWidget(tag_label)
             tags_layout.addStretch()
@@ -486,7 +549,7 @@ class AddEditDialog(QDialog):
         arabic_row = QHBoxLayout()
         self.arabic_entry = QLineEdit(self.word.get('arabic', ''))
         self.arabic_entry.setFont(QFont('Arial', 18))
-        self.arabic_entry.setStyleSheet("color: #d4a853;")
+        self.arabic_entry.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
         self.arabic_entry.setAlignment(Qt.AlignmentFlag.AlignRight)
         arabic_row.addWidget(self.arabic_entry)
         
@@ -501,7 +564,7 @@ class AddEditDialog(QDialog):
         diac_row = QHBoxLayout()
         self.diacritics_entry = QLineEdit(self.word.get('arabic_diacritics', ''))
         self.diacritics_entry.setFont(QFont('Arial', 18))
-        self.diacritics_entry.setStyleSheet("color: #d4a853;")
+        self.diacritics_entry.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
         self.diacritics_entry.setAlignment(Qt.AlignmentFlag.AlignRight)
         diac_row.addWidget(self.diacritics_entry)
         
@@ -587,18 +650,18 @@ class AddEditDialog(QDialog):
         
         for tag in self.selected_tags:
             tag_frame = QFrame()
-            tag_frame.setStyleSheet("background-color: #3d3526; border-radius: 4px;")
+            tag_frame.setStyleSheet("background-color: #0E3F45; border-radius: 4px; border: 1px solid #1A5C63;")
             tag_layout = QHBoxLayout(tag_frame)
             tag_layout.setContentsMargins(8, 4, 4, 4)
             tag_layout.setSpacing(5)
             
             tag_label = QLabel(tag)
-            tag_label.setStyleSheet("color: #d4a853; font-size: 12px;")
+            tag_label.setStyleSheet("color: #D4AA50; font-size: 12px;")
             tag_layout.addWidget(tag_label)
             
             remove_btn = QPushButton("×")
             remove_btn.setFixedSize(20, 20)
-            remove_btn.setStyleSheet("color: #d4a853; font-size: 14px; padding: 0;")
+            remove_btn.setStyleSheet("color: #D4AA50; font-size: 14px; padding: 0; border: none; background: transparent;")
             remove_btn.clicked.connect(lambda checked, t=tag: self.remove_tag(t))
             tag_layout.addWidget(remove_btn)
             
@@ -700,21 +763,27 @@ class ArabicVocabularyApp(QMainWindow):
         
         # Header
         header = QFrame()
-        header.setStyleSheet("background-color: #1a2332;")
+        header.setStyleSheet("background-color: #05363D; border-bottom: 2px solid #D4AA50;")
         header.setFixedHeight(80)
         header_layout = QHBoxLayout(header)
         header_layout.setContentsMargins(25, 15, 25, 15)
         
         # Logo
         logo_layout = QHBoxLayout()
+        
+        # Medallion Icon
+        self.medallion = MedallionLogo(size=56)
+        logo_layout.addWidget(self.medallion)
+        logo_layout.addSpacing(12)
+        
         logo_arabic = QLabel("عربي")
-        logo_arabic.setFont(QFont('Arial', 28))
-        logo_arabic.setStyleSheet("color: #d4a853;")
+        logo_arabic.setFont(QFont('Amiri', 32)) 
+        logo_arabic.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
         logo_layout.addWidget(logo_arabic)
         
         logo_text = QLabel("Vocabulary")
-        logo_text.setFont(QFont('Arial', 20))
-        logo_text.setStyleSheet("color: #8b9bb4;")
+        logo_text.setFont(QFont('Comic Sans MS', 22))
+        logo_text.setStyleSheet("color: #A0C4C8; letter-spacing: 1px; font-family: 'Comic Sans MS', 'Chalkboard SE';")
         logo_layout.addWidget(logo_text)
         logo_layout.addStretch()
         
@@ -730,7 +799,7 @@ class ArabicVocabularyApp(QMainWindow):
         
         # Toolbar
         toolbar = QFrame()
-        toolbar.setStyleSheet("background-color: #0a0f1a;")
+        toolbar.setStyleSheet("background-color: #062C30;")
         toolbar_layout = QHBoxLayout(toolbar)
         toolbar_layout.setContentsMargins(25, 15, 25, 15)
         
@@ -798,7 +867,7 @@ class ArabicVocabularyApp(QMainWindow):
         
         if not self.filtered_words:
             empty_label = QLabel("📚\n\nNo words found.\nAdd your first word!")
-            empty_label.setStyleSheet("color: #8b9bb4; font-size: 16px;")
+            empty_label.setStyleSheet("color: #A0C4C8; font-size: 16px; font-weight: 500;")
             empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.words_layout.addWidget(empty_label, 0, 0, 1, 2)
             return
@@ -899,15 +968,15 @@ def main():
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
     
-    # Dark palette
+    # Dark palette - Arabic Theme
     palette = QPalette()
-    palette.setColor(QPalette.ColorRole.Window, QColor('#0a0f1a'))
-    palette.setColor(QPalette.ColorRole.WindowText, QColor('#e8e6e3'))
-    palette.setColor(QPalette.ColorRole.Base, QColor('#1a2332'))
-    palette.setColor(QPalette.ColorRole.Text, QColor('#e8e6e3'))
-    palette.setColor(QPalette.ColorRole.Button, QColor('#243044'))
-    palette.setColor(QPalette.ColorRole.ButtonText, QColor('#e8e6e3'))
-    palette.setColor(QPalette.ColorRole.Highlight, QColor('#d4a853'))
+    palette.setColor(QPalette.ColorRole.Window, QColor('#062C30'))
+    palette.setColor(QPalette.ColorRole.WindowText, QColor('#FDF6E3'))
+    palette.setColor(QPalette.ColorRole.Base, QColor('#05363D'))
+    palette.setColor(QPalette.ColorRole.Text, QColor('#FDF6E3'))
+    palette.setColor(QPalette.ColorRole.Button, QColor('#0E3F45'))
+    palette.setColor(QPalette.ColorRole.ButtonText, QColor('#FDF6E3'))
+    palette.setColor(QPalette.ColorRole.Highlight, QColor('#D4AA50'))
     app.setPalette(palette)
     
     window = ArabicVocabularyApp()

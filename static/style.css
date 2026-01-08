@@ -2,19 +2,19 @@
 
 :root {
     /* Color Palette */
-    --bg-primary: #0a0f1a;
-    --bg-secondary: #1a2332;
-    --bg-tertiary: #243044;
-    --accent-gold: #d4a853;
-    --accent-gold-dim: #3d3526;
-    --accent-teal: #2d9596;
-    --text-primary: #e8e6e3;
-    --text-secondary: #8b9bb4;
-    --text-arabic: #d4a853;
-    --border-color: #2d3748;
-    --border-gold: #3d3526;
-    --danger: #e53e3e;
-    --success: #38a169;
+    --bg-primary: #062C30;
+    --bg-secondary: #0E3F45;
+    --bg-tertiary: #05363D;
+    --accent-gold: #D4AA50;
+    --accent-gold-dim: #1A5C63;
+    --accent-teal: #38B2AC;
+    --text-primary: #FDF6E3;
+    --text-secondary: #A0C4C8;
+    --text-arabic: #D4AA50;
+    --border-color: #1A5C63;
+    --border-gold: #D4AA50;
+    --danger: #D64541;
+    --success: #2DAA78;
     
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -41,7 +41,7 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
