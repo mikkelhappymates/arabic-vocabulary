@@ -19,3 +19,8 @@ ENV/
 
 # Data backups
 *.bak
+
+# Build artifacts
+build/
+dist/
+*.spec

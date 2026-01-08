@@ -1,6 +1,7 @@
 """
 Arabic Vocabulary App - Desktop Application (PyQt6)
 A native desktop app for learning Arabic vocabulary with Danish and English translations.
+Version: 0.1 Beta
 """
 
 import sys
@@ -8,6 +9,7 @@ import json
 import os
 import uuid
 from datetime import datetime
+from pathlib import Path
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QLineEdit, QTextEdit, QScrollArea, QFrame,
@@ -17,8 +19,18 @@ from PyQt6.QtCore import Qt, QSize, QPointF
 from PyQt6.QtGui import QFont, QColor, QPalette, QPainter, QPen, QBrush
 import math
 
-# Configuration
-DATA_FILE = os.path.join(os.path.dirname(__file__), 'data', 'vocabulary.json')
+# Version
+VERSION = "0.1 Beta"
+
+# Configuration - Store data in Documents folder
+def get_data_dir():
+    """Get the data directory in user's Documents folder."""
+    documents = Path.home() / "Documents" / "ArabicVocabulary"
+    documents.mkdir(parents=True, exist_ok=True)
+    return documents
+
+DATA_DIR = get_data_dir()
+DATA_FILE = DATA_DIR / "vocabulary.json"
 
 # Arabic keyboard layout
 ARABIC_KEYBOARD = [
@@ -173,6 +185,58 @@ QComboBox QAbstractItemView {
 }
 """
 
+# Default starter words for new installations
+DEFAULT_DATA = {
+    "words": [
+        {
+            "id": "1",
+            "arabic": "مرحبا",
+            "transliteration": "marhaba",
+            "english": "hello",
+            "danish": "hej",
+            "tags": ["greetings"],
+            "notes": "Common greeting"
+        },
+        {
+            "id": "2", 
+            "arabic": "شكرا",
+            "transliteration": "shukran",
+            "english": "thank you",
+            "danish": "tak",
+            "tags": ["greetings"],
+            "notes": ""
+        },
+        {
+            "id": "3",
+            "arabic": "نعم",
+            "transliteration": "na'am",
+            "english": "yes",
+            "danish": "ja",
+            "tags": ["basics"],
+            "notes": ""
+        },
+        {
+            "id": "4",
+            "arabic": "لا",
+            "transliteration": "la",
+            "english": "no", 
+            "danish": "nej",
+            "tags": ["basics"],
+            "notes": ""
+        },
+        {
+            "id": "5",
+            "arabic": "ماء",
+            "transliteration": "maa'",
+            "english": "water",
+            "danish": "vand",
+            "tags": ["food & drink"],
+            "notes": ""
+        }
+    ],
+    "tags": ["greetings", "basics", "food & drink"]
+}
+
 
 def load_data():
     """Load vocabulary data from JSON file."""
@@ -180,12 +244,14 @@ def load_data():
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
-        return {"words": [], "tags": []}
+        # Create default data for new installations
+        save_data(DEFAULT_DATA)
+        return DEFAULT_DATA.copy()
 
 
 def save_data(data):
     """Save vocabulary data to JSON file."""
-    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
@@ -613,7 +679,7 @@ class ArabicVocabularyApp(QMainWindow):
     
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Arabic Vocabulary")
+        self.setWindowTitle(f"Arabic Vocabulary - {VERSION}")
         self.setMinimumSize(900, 700)
         self.setStyleSheet(STYLE)
         
