@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic Vocabulary</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <span class="logo-arabic">عربي</span>
+                    <span class="logo-text">Vocabulary</span>
+                </h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="addWordBtn">
+                        <span class="btn-icon">+</span>
+                        Add Word
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search and Filter Bar -->
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search words..." class="search-input">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="tag-filter">
+                <select id="tagFilter" class="tag-select">
+                    <option value="">All Tags</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Word Cards Grid -->
+        <main class="words-container">
+            <div class="words-grid" id="wordsGrid">
+                <!-- Words will be inserted here -->
+            </div>
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">📚</div>
+                <p>No words found. Add your first word!</p>
+            </div>
+        </main>
+
+        <!-- Add/Edit Word Modal -->
+        <div class="modal" id="wordModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Add New Word</h2>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <form id="wordForm" class="word-form">
+                    <input type="hidden" id="wordId">
+                    
+                    <div class="form-group">
+                        <label for="arabicInput">Arabic</label>
+                        <div class="input-with-keyboard">
+                            <input type="text" id="arabicInput" class="form-input arabic-text" dir="rtl" required>
+                            <button type="button" class="keyboard-toggle" data-target="arabicInput">⌨️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="arabicDiacriticsInput">Arabic with Diacritics (optional)</label>
+                        <div class="input-with-keyboard">
+                            <input type="text" id="arabicDiacriticsInput" class="form-input arabic-text" dir="rtl">
+                            <button type="button" class="keyboard-toggle" data-target="arabicDiacriticsInput">⌨️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transliterationInput">Transliteration (optional)</label>
+                        <input type="text" id="transliterationInput" class="form-input" placeholder="e.g., marhaba">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="englishInput">English</label>
+                            <input type="text" id="englishInput" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="danishInput">Danish</label>
+                            <input type="text" id="danishInput" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tagsInput">Tags</label>
+                        <div class="tags-input-container" id="tagsInputContainer">
+                            <div class="selected-tags" id="selectedTags"></div>
+                            <select id="tagsInput" class="form-input">
+                                <option value="">Select a tag...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notesInput">Notes (optional)</label>
+                        <textarea id="notesInput" class="form-input form-textarea" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Word</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Arabic Keyboard -->
+        <div class="arabic-keyboard" id="arabicKeyboard">
+            <div class="keyboard-header">
+                <span>Arabic Keyboard</span>
+                <button class="keyboard-close" id="closeKeyboard">&times;</button>
+            </div>
+            <div class="keyboard-body">
+                <!-- Row 1: Numbers -->
+                <div class="keyboard-row">
+                    <button class="key" data-char="١">١</button>
+                    <button class="key" data-char="٢">٢</button>
+                    <button class="key" data-char="٣">٣</button>
+                    <button class="key" data-char="٤">٤</button>
+                    <button class="key" data-char="٥">٥</button>
+                    <button class="key" data-char="٦">٦</button>
+                    <button class="key" data-char="٧">٧</button>
+                    <button class="key" data-char="٨">٨</button>
+                    <button class="key" data-char="٩">٩</button>
+                    <button class="key" data-char="٠">٠</button>
+                </div>
+                <!-- Row 2 -->
+                <div class="keyboard-row">
+                    <button class="key" data-char="ض">ض</button>
+                    <button class="key" data-char="ص">ص</button>
+                    <button class="key" data-char="ث">ث</button>
+                    <button class="key" data-char="ق">ق</button>
+                    <button class="key" data-char="ف">ف</button>
+                    <button class="key" data-char="غ">غ</button>
+                    <button class="key" data-char="ع">ع</button>
+                    <button class="key" data-char="ه">ه</button>
+                    <button class="key" data-char="خ">خ</button>
+                    <button class="key" data-char="ح">ح</button>
+                    <button class="key" data-char="ج">ج</button>
+                </div>
+                <!-- Row 3 -->
+                <div class="keyboard-row">
+                    <button class="key" data-char="ش">ش</button>
+                    <button class="key" data-char="س">س</button>
+                    <button class="key" data-char="ي">ي</button>
+                    <button class="key" data-char="ب">ب</button>
+                    <button class="key" data-char="ل">ل</button>
+                    <button class="key" data-char="ا">ا</button>
+                    <button class="key" data-char="ت">ت</button>
+                    <button class="key" data-char="ن">ن</button>
+                    <button class="key" data-char="م">م</button>
+                    <button class="key" data-char="ك">ك</button>
+                    <button class="key" data-char="ة">ة</button>
+                </div>
+                <!-- Row 4 -->
+                <div class="keyboard-row">
+                    <button class="key" data-char="ئ">ئ</button>
+                    <button class="key" data-char="ء">ء</button>
+                    <button class="key" data-char="ؤ">ؤ</button>
+                    <button class="key" data-char="ر">ر</button>
+                    <button class="key" data-char="ى">ى</button>
+                    <button class="key" data-char="ة">ة</button>
+                    <button class="key" data-char="و">و</button>
+                    <button class="key" data-char="ز">ز</button>
+                    <button class="key" data-char="ظ">ظ</button>
+                    <button class="key" data-char="ط">ط</button>
+                    <button class="key" data-char="ذ">ذ</button>
+                    <button class="key" data-char="د">د</button>
+                </div>
+                <!-- Row 5: Special characters -->
+                <div class="keyboard-row">
+                    <button class="key" data-char="آ">آ</button>
+                    <button class="key" data-char="أ">أ</button>
+                    <button class="key" data-char="إ">إ</button>
+                    <button class="key" data-char="لا">لا</button>
+                    <button class="key key-space" data-char=" ">Space</button>
+                    <button class="key key-backspace" id="keyboardBackspace">⌫</button>
+                </div>
+                <!-- Row 6: Diacritics -->
+                <div class="keyboard-row diacritics-row">
+                    <span class="diacritics-label">Tashkeel:</span>
+                    <button class="key key-diacritic" data-char="َ" title="Fatha">َ</button>
+                    <button class="key key-diacritic" data-char="ِ" title="Kasra">ِ</button>
+                    <button class="key key-diacritic" data-char="ُ" title="Damma">ُ</button>
+                    <button class="key key-diacritic" data-char="ْ" title="Sukun">ْ</button>
+                    <button class="key key-diacritic" data-char="ّ" title="Shadda">ّ</button>
+                    <button class="key key-diacritic" data-char="ً" title="Tanwin Fatha">ً</button>
+                    <button class="key key-diacritic" data-char="ٍ" title="Tanwin Kasra">ٍ</button>
+                    <button class="key key-diacritic" data-char="ٌ" title="Tanwin Damma">ٌ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

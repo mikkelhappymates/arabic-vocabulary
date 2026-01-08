@@ -1,0 +1,101 @@
+{
+  "words": [
+    {
+      "id": "starter-001",
+      "arabic": "مرحبا",
+      "arabic_diacritics": "مَرْحَبًا",
+      "transliteration": "marhaba",
+      "danish": "hej",
+      "english": "hello",
+      "tags": [
+        "greetings"
+      ],
+      "image": null,
+      "notes": "",
+      "created_at": "2026-01-08T10:00:00Z",
+      "updated_at": "2026-01-08T10:00:00Z"
+    },
+    {
+      "id": "starter-002",
+      "arabic": "شكرا",
+      "arabic_diacritics": "شُكْرًا",
+      "transliteration": "shukran",
+      "danish": "tak",
+      "english": "thank you",
+      "tags": [
+        "greetings"
+      ],
+      "image": null,
+      "notes": "",
+      "created_at": "2026-01-08T10:00:00Z",
+      "updated_at": "2026-01-08T10:00:00Z"
+    },
+    {
+      "id": "starter-003",
+      "arabic": "نعم",
+      "arabic_diacritics": "نَعَمْ",
+      "transliteration": "na'am",
+      "danish": "ja",
+      "english": "yes",
+      "tags": [
+        "basics"
+      ],
+      "image": null,
+      "notes": "",
+      "created_at": "2026-01-08T10:00:00Z",
+      "updated_at": "2026-01-08T10:00:00Z"
+    },
+    {
+      "id": "starter-004",
+      "arabic": "لا",
+      "arabic_diacritics": "لَا",
+      "transliteration": "la",
+      "danish": "nej",
+      "english": "no",
+      "tags": [
+        "basics"
+      ],
+      "image": null,
+      "notes": "",
+      "created_at": "2026-01-08T10:00:00Z",
+      "updated_at": "2026-01-08T10:00:00Z"
+    },
+    {
+      "id": "starter-005",
+      "arabic": "ماء",
+      "arabic_diacritics": "مَاء",
+      "transliteration": "maa'",
+      "danish": "vand",
+      "english": "water",
+      "tags": [
+        "nouns",
+        "food"
+      ],
+      "image": null,
+      "notes": "",
+      "created_at": "2026-01-08T10:00:00Z",
+      "updated_at": "2026-01-08T10:00:00Z"
+    },
+    {
+      "id": "b5de6f39-1591-4adb-82e0-3a49c55d6219",
+      "arabic": "سلام",
+      "arabic_diacritics": "سَلام",
+      "transliteration": "salaam",
+      "english": "peace",
+      "danish": "fred",
+      "tags": [
+        "nouns"
+      ],
+      "notes": "",
+      "created_at": "2026-01-08T22:52:11.877069Z",
+      "updated_at": "2026-01-08T22:52:11.877069Z"
+    }
+  ],
+  "tags": [
+    "greetings",
+    "basics",
+    "nouns",
+    "food",
+    "verbs"
+  ]
+}
