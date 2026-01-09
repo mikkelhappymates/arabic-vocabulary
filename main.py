@@ -1,7 +1,7 @@
 """
 Arabic Vocabulary App - Desktop Application (PyQt6)
 A native desktop app for learning Arabic vocabulary with Danish and English translations.
-Version: 0.2 Beta
+Version: 0.4 Beta
 """
 
 import sys
@@ -22,7 +22,7 @@ import math
 import random
 
 # Version
-VERSION = "0.3 Beta"
+VERSION = "0.4 Beta"
 
 # Configuration - Store data in Documents folder
 def get_data_dir():

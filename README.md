@@ -12,9 +12,20 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
 
 | Platform | Download |
 |----------|----------|
-| macOS | `ArabicVocabulary-0.3-beta-Mac.zip` |
-| Windows | `ArabicVocabulary-0.3-beta-Windows.zip` |
-| Linux | `ArabicVocabulary-0.3-beta-Linux.zip` |
+| macOS | `ArabicVocabulary-0.4-beta-Mac.zip` |
+| Windows | `ArabicVocabulary-0.4-beta-Windows.zip` |
+| Linux | `ArabicVocabulary-0.4-beta-Linux.tar.gz` |
+
+## What's New in v0.4
+
+- **⚙️ Settings Menu** - Manage your app preferences
+- **📤 Import/Export**
+  - Export your vocabulary list to JSON
+  - Import lists from friends (merges safely with your data)
+- **🌍 Language Selection**
+  - Choose up to 2 active languages to display cards
+  - Support for English, Danish, German, Spanish, Russian, Italian
+  - Add your own custom languages!
 
 ## What's New in v0.3
 
