@@ -22,7 +22,7 @@ import math
 import random
 
 # Version
-VERSION = "0.4 Beta"
+VERSION = "0.4.1 Beta"
 
 # Configuration - Store data in Documents folder
 def get_data_dir():

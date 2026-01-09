@@ -12,11 +12,11 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
 
 | Platform | Download |
 |----------|----------|
-| macOS | `ArabicVocabulary-0.4-beta-Mac.zip` |
-| Windows | `ArabicVocabulary-0.4-beta-Windows.zip` |
-| Linux | `ArabicVocabulary-0.4-beta-Linux.tar.gz` |
+| macOS | `ArabicVocabulary-0.4.1-beta-Mac.zip` |
+| Windows | `ArabicVocabulary-0.4.1-beta-Setup.exe` |
+| Linux | `ArabicVocabulary-0.4.1-beta-Linux.tar.gz` |
 
-## What's New in v0.4
+## What's New in v0.4.1
 
 - **⚙️ Settings Menu** - Manage your app preferences
 - **📤 Import/Export**

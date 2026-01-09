@@ -37,13 +37,13 @@ jobs:
       - name: Create tarball
         run: |
           cd dist
-          tar -czvf ArabicVocabulary-0.3-beta-Linux.tar.gz ArabicVocabulary/
+          tar -czvf ArabicVocabulary-0.4.1-beta-Linux.tar.gz ArabicVocabulary/
       
       - name: Upload Linux build
         uses: actions/upload-artifact@v4
         with:
           name: ArabicVocabulary-Linux
-          path: dist/ArabicVocabulary-0.3-beta-Linux.tar.gz
+          path: dist/ArabicVocabulary-0.4.1-beta-Linux.tar.gz
       
       - name: Upload to Release
         if: startsWith(github.ref, 'refs/tags/')
