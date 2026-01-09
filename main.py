@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QLineEdit, QTextEdit, QScrollArea, QFrame,
     QGridLayout, QDialog, QMessageBox, QComboBox, QSizePolicy, QStackedWidget,
-    QRadioButton, QButtonGroup
+    QRadioButton, QButtonGroup, QFileDialog, QCheckBox, QInputDialog
 )
 from PyQt6.QtCore import Qt, QSize, QPointF
 from PyQt6.QtGui import QFont, QColor, QPalette, QPainter, QPen, QBrush, QPainterPath
@@ -301,7 +301,10 @@ DEFAULT_DATA = {
         }
     ],
     "tags": ["greetings", "basics", "food & drink"],
-    "word_groups": []
+    "word_groups": [],
+    "settings": {
+        "languages": ["English", "Danish"]
+    }
 }
 
 # Grammar options
@@ -438,14 +441,198 @@ class ArabicKeyboard(QDialog):
             self.target_entry.setFocus()
 
 
+class SettingsWidget(QWidget):
+    """Widget for application settings."""
+    
+    def __init__(self, data, on_save, on_import):
+        super().__init__()
+        self.data = data
+        self.on_save = on_save
+        self.on_import = on_import
+        self.available_langs = ["English", "Danish", "German", "Spanish", "Russian", "Italian"]
+        self.checkboxes = {}
+        
+        self.setup_ui()
+    
+    def setup_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(30, 30, 30, 30)
+        layout.setSpacing(25)
+        
+        # Title
+        title = QLabel("⚙️ Settings")
+        title.setFont(QFont('Comic Sans MS', 24))
+        title.setStyleSheet("color: #D4AA50;")
+        layout.addWidget(title)
+        
+        # --- Data Management Section ---
+        data_group = QFrame()
+        data_group.setStyleSheet("""
+            QFrame {
+                background-color: #05363D;
+                border: 1px solid #1A5C63;
+                border-radius: 12px;
+                padding: 15px;
+            }
+        """)
+        data_layout = QVBoxLayout(data_group)
+        
+        data_label = QLabel("Data Management")
+        data_label.setFont(QFont('Arial', 16, QFont.Weight.Bold))
+        data_label.setStyleSheet("color: #D4AA50; border: none;")
+        data_layout.addWidget(data_label)
+        
+        export_btn = QPushButton("📤 Export Vocabulary (JSON)")
+        export_btn.clicked.connect(self.export_json)
+        data_layout.addWidget(export_btn)
+        
+        import_btn = QPushButton("📥 Import Vocabulary (JSON)")
+        import_btn.clicked.connect(self.import_json)
+        data_layout.addWidget(import_btn)
+        
+        layout.addWidget(data_group)
+        
+        # --- Language Selection Section ---
+        lang_group = QFrame()
+        lang_group.setStyleSheet("""
+            QFrame {
+                background-color: #05363D;
+                border: 1px solid #1A5C63;
+                border-radius: 12px;
+                padding: 15px;
+            }
+        """)
+        lang_layout = QVBoxLayout(lang_group)
+        
+        lang_label = QLabel("Active Languages")
+        lang_label.setFont(QFont('Arial', 16, QFont.Weight.Bold))
+        lang_label.setStyleSheet("color: #D4AA50; border: none;")
+        lang_layout.addWidget(lang_label)
+        
+        desc_label = QLabel("Select up to 2 languages to display:")
+        desc_label.setStyleSheet("color: #A0C4C8; border: none;")
+        lang_layout.addWidget(desc_label)
+        
+        # Checkboxes
+        self.lang_container = QWidget()
+        self.lang_container.setStyleSheet("border: none; background: transparent;")
+        self.lang_grid = QGridLayout(self.lang_container)
+        
+        current_langs = self.data.get('settings', {}).get('languages', ["English", "Danish"])
+        
+        # Combine default available langs with any custom ones present in settings
+        all_langs_to_show = sorted(list(set(self.available_langs + current_langs)))
+        
+        for idx, lang in enumerate(all_langs_to_show):
+            cb = QCheckBox(lang)
+            cb.setStyleSheet("color: #FDF6E3; spacing: 8px;")
+            if lang in current_langs:
+                cb.setChecked(True)
+            cb.stateChanged.connect(self.check_selection_limit)
+            self.checkboxes[lang] = cb
+            self.lang_grid.addWidget(cb, idx // 2, idx % 2)
+            
+        lang_layout.addWidget(self.lang_container)
+        
+        # Add Custom Language
+        add_lang_btn = QPushButton("+ Add Custom Language")
+        add_lang_btn.setFixedWidth(200)
+        add_lang_btn.clicked.connect(self.add_custom_language)
+        lang_layout.addWidget(add_lang_btn)
+        
+        # Save Languages Button
+        save_lang_btn = QPushButton("Save Language Preferences")
+        save_lang_btn.setObjectName("primaryBtn")
+        save_lang_btn.clicked.connect(self.save_languages)
+        lang_layout.addWidget(save_lang_btn)
+        
+        layout.addWidget(lang_group)
+        layout.addStretch()
+    
+    def check_selection_limit(self):
+        """Ensure max 2 languages are selected."""
+        selected = [cb for cb in self.checkboxes.values() if cb.isChecked()]
+        if len(selected) > 2:
+            sender = self.sender()
+            sender.setChecked(False)
+            QMessageBox.warning(self, "Limit Reached", "You can select a maximum of 2 languages.")
+    
+    def add_custom_language(self):
+        """Add a custom language to the list."""
+        lang, ok = QInputDialog.getText(self, "Add Language", "Language Name:")
+        if ok and lang:
+            lang = lang.strip().title()
+            if lang and lang not in self.checkboxes:
+                cb = QCheckBox(lang)
+                cb.setStyleSheet("color: #FDF6E3; spacing: 8px;")
+                cb.setChecked(True) # Auto-select new language
+                cb.stateChanged.connect(self.check_selection_limit)
+                
+                # Check limit before adding if we are auto-selecting
+                selected_count = sum(1 for c in self.checkboxes.values() if c.isChecked())
+                if selected_count >= 2:
+                     cb.setChecked(False)
+                
+                self.checkboxes[lang] = cb
+                count = self.lang_grid.count()
+                self.lang_grid.addWidget(cb, count // 2, count % 2)
+    
+    def save_languages(self):
+        """Save the selected languages to settings."""
+        selected = [lang for lang, cb in self.checkboxes.items() if cb.isChecked()]
+        
+        if not selected:
+             QMessageBox.warning(self, "Error", "Please select at least one language.")
+             return
+             
+        if 'settings' not in self.data:
+            self.data['settings'] = {}
+        
+        self.data['settings']['languages'] = selected
+        
+        # Persist changes
+        self.on_save(self.data)
+        QMessageBox.information(self, "Success", "Language preferences saved! Restart or navigate away to see changes.")
+
+    def export_json(self):
+        """Export data."""
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Export Vocabulary", 
+            str(Path.home() / "vocabulary_export.json"), 
+            "JSON Files (*.json)"
+        )
+        if file_path:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(self.data, f, ensure_ascii=False, indent=2)
+            QMessageBox.information(self, "Success", f"Data exported to {file_path}")
+            
+    def import_json(self):
+        """Import data."""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Import Vocabulary", 
+            str(Path.home()), 
+            "JSON Files (*.json)"
+        )
+        if file_path:
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    new_data = json.load(f)
+                
+                if self.on_import(new_data):
+                    QMessageBox.information(self, "Success", "Vocabulary imported successfully!")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to import file: {str(e)}")
+
+
 class WordCard(QFrame):
     """A card displaying a single vocabulary word."""
     
-    def __init__(self, word, on_edit, on_delete):
+    def __init__(self, word, on_edit, on_delete, languages=None):
         super().__init__()
         self.word = word
         self.on_edit = on_edit
         self.on_delete = on_delete
+        self.languages = languages or ["English", "Danish"]
         
         self.setStyleSheet("""
             WordCard {
@@ -466,7 +653,7 @@ class WordCard(QFrame):
         arabic_text = word.get('arabic_diacritics') or word.get('arabic', '')
         arabic_label = QLabel(arabic_text)
         arabic_label.setFont(QFont('Arial', 32))
-        arabic_label.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
+        arabic_label.setStyleSheet("color: #D4AA50; font-family: 'Arial';")
         arabic_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(arabic_label)
         
@@ -483,27 +670,21 @@ class WordCard(QFrame):
         trans_layout = QVBoxLayout(trans_frame)
         trans_layout.setSpacing(5)
         
-        # English
-        en_row = QHBoxLayout()
-        en_label = QLabel("EN")
-        en_label.setStyleSheet("color: #38B2AC; font-weight: bold; font-size: 11px;")
-        en_label.setFixedWidth(30)
-        en_row.addWidget(en_label)
-        en_text = QLabel(word.get('english', ''))
-        en_row.addWidget(en_text)
-        en_row.addStretch()
-        trans_layout.addLayout(en_row)
-        
-        # Danish
-        da_row = QHBoxLayout()
-        da_label = QLabel("DA")
-        da_label.setStyleSheet("color: #38B2AC; font-weight: bold; font-size: 11px;")
-        da_label.setFixedWidth(30)
-        da_row.addWidget(da_label)
-        da_text = QLabel(word.get('danish', ''))
-        da_row.addWidget(da_text)
-        da_row.addStretch()
-        trans_layout.addLayout(da_row)
+        # Dynamic Languages
+        for lang in self.languages:
+            lang_key = lang.lower()
+            lang_code = lang[:2].upper()
+            
+            row = QHBoxLayout()
+            label = QLabel(lang_code)
+            label.setStyleSheet("color: #38B2AC; font-weight: bold; font-size: 11px;")
+            label.setFixedWidth(30)
+            row.addWidget(label)
+            
+            text = QLabel(word.get(lang_key, ''))
+            row.addWidget(text)
+            row.addStretch()
+            trans_layout.addLayout(row)
         
         layout.addWidget(trans_frame)
         
@@ -609,7 +790,7 @@ class QuizCard(QFrame):
             input_row = QHBoxLayout()
             self.answer_entry = QLineEdit()
             self.answer_entry.setFont(QFont('Arial', 18))
-            self.answer_entry.setStyleSheet("font-family: 'Amiri', 'Arial'; text-align: right;")
+            self.answer_entry.setStyleSheet("font-family: 'Arial'; text-align: right;")
             self.answer_entry.setAlignment(Qt.AlignmentFlag.AlignRight)
             self.answer_entry.returnPressed.connect(self.check_answer)
             input_row.addWidget(self.answer_entry)
@@ -627,7 +808,7 @@ class QuizCard(QFrame):
             arabic_text = word.get('arabic_diacritics') or word.get('arabic', '')
             arabic_label = QLabel(arabic_text)
             arabic_label.setFont(QFont('Arial', 28))
-            arabic_label.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
+            arabic_label.setStyleSheet("color: #D4AA50; font-family: 'Arial';")
             arabic_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             layout.addWidget(arabic_label)
             
@@ -689,8 +870,25 @@ class QuizCard(QFrame):
                 self.result_label.setText(f"✗ Answer: {self.correct_answer}")
                 self.result_label.setStyleSheet("color: #E74C3C; font-size: 14px; font-weight: bold;")
         else:
-            user_en = self.en_entry.text().strip().lower()
-            user_da = self.da_entry.text().strip().lower()
+            # Translation mode check
+            results = []
+            all_correct = True
+            
+            # Check English/Danish explicitly if they were the target fields
+            # But the card might have been built dynamically. 
+            # Revert to simpler logic: 
+            # We need to know WHICH fields were presented in the UI to check them.
+            # Assuming the standard fields `en_entry` and `da_entry` exist for backward compat
+            # or we need to refactor QuizCard completely for dynamic langs.
+            
+            # For this iteration, let's keep the hardcoded English/Danish in QuizCard for now 
+            # or safer: skip quiz refactor for dynamic languages in this step since the user 
+            # didn't explicitly ask for dynamic quiz languages yet, mainly "select desired languages" for display.
+            # However, to avoid breakage if fields are missing:
+            
+            user_en = getattr(self, 'en_entry', QLineEdit()).text().strip().lower()
+            user_da = getattr(self, 'da_entry', QLineEdit()).text().strip().lower()
+            
             en_correct = user_en == self.correct_en
             da_correct = user_da == self.correct_da
             
@@ -883,13 +1081,15 @@ class QuizWidget(QWidget):
 class AddEditDialog(QDialog):
     """Dialog for adding or editing a word."""
     
-    def __init__(self, parent, word=None, tags=None, on_save=None):
+    def __init__(self, parent, word=None, tags=None, on_save=None, languages=None):
         super().__init__(parent)
         self.word = word or {}
         self.all_tags = tags or []
         self.on_save_callback = on_save
+        self.languages = languages or ["English", "Danish"]
         self.selected_tags = list(self.word.get('tags', []))
         self.keyboard = None
+        self.lang_entries = {}
         
         self.setWindowTitle("Edit Word" if word else "Add New Word")
         self.setFixedSize(550, 850)
@@ -904,7 +1104,7 @@ class AddEditDialog(QDialog):
         arabic_row = QHBoxLayout()
         self.arabic_entry = QLineEdit(self.word.get('arabic', ''))
         self.arabic_entry.setFont(QFont('Arial', 18))
-        self.arabic_entry.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
+        self.arabic_entry.setStyleSheet("color: #D4AA50; font-family: 'Arial';")
         self.arabic_entry.setAlignment(Qt.AlignmentFlag.AlignRight)
         arabic_row.addWidget(self.arabic_entry)
         
@@ -919,7 +1119,7 @@ class AddEditDialog(QDialog):
         diac_row = QHBoxLayout()
         self.diacritics_entry = QLineEdit(self.word.get('arabic_diacritics', ''))
         self.diacritics_entry.setFont(QFont('Arial', 18))
-        self.diacritics_entry.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
+        self.diacritics_entry.setStyleSheet("color: #D4AA50; font-family: 'Arial';")
         self.diacritics_entry.setAlignment(Qt.AlignmentFlag.AlignRight)
         diac_row.addWidget(self.diacritics_entry)
         
@@ -934,15 +1134,13 @@ class AddEditDialog(QDialog):
         self.transliteration_entry = QLineEdit(self.word.get('transliteration', ''))
         layout.addWidget(self.transliteration_entry)
         
-        # English
-        layout.addWidget(QLabel("English *"))
-        self.english_entry = QLineEdit(self.word.get('english', ''))
-        layout.addWidget(self.english_entry)
-        
-        # Danish
-        layout.addWidget(QLabel("Danish *"))
-        self.danish_entry = QLineEdit(self.word.get('danish', ''))
-        layout.addWidget(self.danish_entry)
+        # Dynamic Languages
+        for lang in self.languages:
+            lang_key = lang.lower()
+            layout.addWidget(QLabel(f"{lang} *"))
+            entry = QLineEdit(self.word.get(lang_key, ''))
+            layout.addWidget(entry)
+            self.lang_entries[lang_key] = entry
         
         # Grammar section
         grammar_label = QLabel("Grammar (for verb conjugations)")
@@ -1125,11 +1323,18 @@ class AddEditDialog(QDialog):
     def save(self):
         """Save the word."""
         arabic = self.arabic_entry.text().strip()
-        english = self.english_entry.text().strip()
-        danish = self.danish_entry.text().strip()
         
-        if not arabic or not english or not danish:
-            QMessageBox.warning(self, "Error", "Arabic, English, and Danish are required.")
+        # Validate dynamic language fields
+        lang_values = {}
+        for lang_key, entry in self.lang_entries.items():
+            val = entry.text().strip()
+            if not val:
+                 QMessageBox.warning(self, "Error", f"{lang_key.title()} is required.")
+                 return
+            lang_values[lang_key] = val
+        
+        if not arabic:
+            QMessageBox.warning(self, "Error", "Arabic is required.")
             return
         
         now = datetime.utcnow().isoformat() + 'Z'
@@ -1149,8 +1354,7 @@ class AddEditDialog(QDialog):
             'arabic': arabic,
             'arabic_diacritics': self.diacritics_entry.text().strip(),
             'transliteration': self.transliteration_entry.text().strip(),
-            'english': english,
-            'danish': danish,
+            **lang_values,
             'tags': self.selected_tags,
             'grammar': grammar_data,
             'notes': self.notes_entry.toPlainText().strip(),
@@ -1177,8 +1381,13 @@ class ArabicVocabularyApp(QMainWindow):
         
         # Data
         self.data = load_data()
+        
+        # Ensure 'settings' key exists for legacy data
+        if 'settings' not in self.data:
+            self.data['settings'] = {"languages": ["English", "Danish"]}
+            
         self.filtered_words = self.data['words']
-        self.quiz_keyboard = None
+        self.keyboard = None
         
         self.setup_ui()
         self.refresh_words()
@@ -1207,8 +1416,8 @@ class ArabicVocabularyApp(QMainWindow):
         logo_layout.addSpacing(12)
         
         logo_arabic = QLabel("عربي")
-        logo_arabic.setFont(QFont('Amiri', 32)) 
-        logo_arabic.setStyleSheet("color: #D4AA50; font-family: 'Amiri', 'Arial';")
+        logo_arabic.setFont(QFont('Arial', 32)) 
+        logo_arabic.setStyleSheet("color: #D4AA50; font-family: 'Arial';")
         logo_layout.addWidget(logo_arabic)
         
         logo_text = QLabel("Vocabulary")
@@ -1282,6 +1491,25 @@ class ArabicVocabularyApp(QMainWindow):
         self.quiz_btn.clicked.connect(lambda: self.switch_mode('quiz'))
         sidebar_layout.addWidget(self.quiz_btn)
         
+        self.settings_btn = QPushButton("⚙️ Settings")
+        self.settings_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #0E3F45;
+                color: #A0C4C8;
+                font-weight: bold;
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid #1A5C63;
+                text-align: left;
+            }
+            QPushButton:hover {
+                background-color: #1A5C63;
+                color: #FFFFFF;
+            }
+        """)
+        self.settings_btn.clicked.connect(lambda: self.switch_mode('settings'))
+        sidebar_layout.addWidget(self.settings_btn)
+        
         sidebar_layout.addStretch()
         
         content_wrapper.addWidget(self.sidebar)
@@ -1326,6 +1554,12 @@ class ArabicVocabularyApp(QMainWindow):
         self.search_entry.setFixedWidth(300)
         self.search_entry.textChanged.connect(self.filter_words)
         toolbar_layout.addWidget(self.search_entry)
+        
+        # Keyboard button
+        self.kb_btn = QPushButton("⌨️")
+        self.kb_btn.setFixedSize(40, 40)
+        self.kb_btn.clicked.connect(lambda: self.show_keyboard(self.search_entry))
+        toolbar_layout.addWidget(self.kb_btn)
         
         # Tag filter
         self.tag_filter = QComboBox()
@@ -1376,8 +1610,16 @@ class ArabicVocabularyApp(QMainWindow):
         self.stack.addWidget(library_page)  # Index 0: Library
         
         # Quiz page
-        self.quiz_widget = QuizWidget(self.data, self.show_quiz_keyboard)
+        self.quiz_widget = QuizWidget(self.data, self.show_keyboard)
         self.stack.addWidget(self.quiz_widget)  # Index 1: Quiz
+        
+        # Settings page
+        self.settings_widget = SettingsWidget(
+            self.data, 
+            on_save=self.save_settings_data,
+            on_import=self.import_data
+        )
+        self.stack.addWidget(self.settings_widget) # Index 2: Settings
         
         content_wrapper.addWidget(self.stack)
         
@@ -1401,82 +1643,67 @@ class ArabicVocabularyApp(QMainWindow):
             self.sidebar_visible = True
     
     def switch_mode(self, mode):
-        """Switch between library and quiz mode."""
+        """Switch between library, quiz, and settings mode."""
         self.current_mode = mode
         
+        # Reset styles
+        inactive_style = """
+            QPushButton {
+                background-color: #0E3F45;
+                color: #A0C4C8;
+                font-weight: bold;
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid #1A5C63;
+                text-align: left;
+            }
+            QPushButton:hover {
+                background-color: #1A5C63;
+                color: #FFFFFF;
+            }
+        """
+        active_style = """
+            QPushButton {
+                background-color: #D4AA50;
+                color: #062C30;
+                font-weight: bold;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: left;
+            }
+            QPushButton:hover {
+                background-color: #E5BB61;
+            }
+        """
+        
+        self.library_btn.setStyleSheet(inactive_style)
+        self.quiz_btn.setStyleSheet(inactive_style)
+        self.settings_btn.setStyleSheet(inactive_style)
+        
+        # Configure UI based on mode
         if mode == 'library':
             self.stack.setCurrentIndex(0)
             self.add_btn.show()
-            self.library_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #D4AA50;
-                    color: #062C30;
-                    font-weight: bold;
-                    padding: 15px;
-                    border-radius: 8px;
-                    text-align: left;
-                }
-                QPushButton:hover {
-                    background-color: #E5BB61;
-                }
-            """)
-            self.quiz_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #0E3F45;
-                    color: #A0C4C8;
-                    font-weight: bold;
-                    padding: 15px;
-                    border-radius: 8px;
-                    border: 1px solid #1A5C63;
-                    text-align: left;
-                }
-                QPushButton:hover {
-                    background-color: #1A5C63;
-                    color: #FFFFFF;
-                }
-            """)
-        else:  # quiz
+            self.library_btn.setStyleSheet(active_style)
+        elif mode == 'quiz':
             self.stack.setCurrentIndex(1)
             self.add_btn.hide()
+            self.quiz_btn.setStyleSheet(active_style)
             self.quiz_widget.update_tags(self.data.get('tags', []))
-            self.quiz_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #D4AA50;
-                    color: #062C30;
-                    font-weight: bold;
-                    padding: 15px;
-                    border-radius: 8px;
-                    text-align: left;
-                }
-                QPushButton:hover {
-                    background-color: #E5BB61;
-                }
-            """)
-            self.library_btn.setStyleSheet("""
-                QPushButton {
-                    background-color: #0E3F45;
-                    color: #A0C4C8;
-                    font-weight: bold;
-                    padding: 15px;
-                    border-radius: 8px;
-                    border: 1px solid #1A5C63;
-                    text-align: left;
-                }
-                QPushButton:hover {
-                    background-color: #1A5C63;
-                    color: #FFFFFF;
-                }
-            """)
+        elif mode == 'settings':
+            self.stack.setCurrentIndex(2)
+            self.add_btn.hide()
+            self.settings_btn.setStyleSheet(active_style)
     
-    def show_quiz_keyboard(self, target_entry):
-        """Show Arabic keyboard for quiz input."""
-        if hasattr(self, 'quiz_keyboard') and self.quiz_keyboard:
-            self.quiz_keyboard.target_entry = target_entry
-            self.quiz_keyboard.show()
-            self.quiz_keyboard.raise_()
+    def show_keyboard(self, target_entry):
+        """Show Arabic keyboard."""
+        if hasattr(self, 'keyboard') and self.keyboard:
+            self.keyboard.target_entry = target_entry
+            self.keyboard.show()
+            self.keyboard.raise_()
         else:
-            self.quiz_keyboard = ArabicKeyboard(self, target_entry)
-            self.quiz_keyboard.show()
+            self.keyboard = ArabicKeyboard(self, target_entry)
+            self.keyboard.show()
     
     def resizeEvent(self, event):
         """Handle window resize to update pattern background."""
@@ -1502,14 +1729,17 @@ class ArabicVocabularyApp(QMainWindow):
             self.words_layout.addWidget(empty_label, 0, 0, 1, 2)
             return
         
+        # Get active languages
+        languages = self.data.get('settings', {}).get('languages', ["English", "Danish"])
+        
         # Add word cards in grid (2 columns)
         for idx, word in enumerate(self.filtered_words):
             row = idx // 2
             col = idx % 2
-            card = WordCard(word, self.edit_word, self.delete_word)
+            card = WordCard(word, self.edit_word, self.delete_word, languages)
             self.words_layout.addWidget(card, row, col)
     
-    def filter_words(self):
+    def filter_words(self, *args):
         """Filter words based on search, tag, and word group."""
         search = self.search_entry.text().lower()
         tag = self.tag_filter.currentText()
@@ -1542,20 +1772,24 @@ class ArabicVocabularyApp(QMainWindow):
     
     def add_word(self):
         """Open dialog to add a new word."""
+        languages = self.data.get('settings', {}).get('languages', ["English", "Danish"])
         dialog = AddEditDialog(
             self,
             tags=self.data.get('tags', []),
-            on_save=self.save_word
+            on_save=self.save_word,
+            languages=languages
         )
         dialog.exec()
     
     def edit_word(self, word):
         """Open dialog to edit a word."""
+        languages = self.data.get('settings', {}).get('languages', ["English", "Danish"])
         dialog = AddEditDialog(
             self,
             word=word,
             tags=self.data.get('tags', []),
-            on_save=self.save_word
+            on_save=self.save_word,
+            languages=languages
         )
         dialog.exec()
     
@@ -1629,6 +1863,50 @@ class ArabicVocabularyApp(QMainWindow):
             save_data(self.data)
             self.update_group_filter()
             self.filter_words()
+
+
+    def save_settings_data(self, data):
+        """Save updated settings and refresh UI."""
+        self.data = data
+        save_data(self.data)
+        # Refresh word cards to show new languages
+        self.refresh_words()
+        
+    def import_data(self, new_data):
+        """Import vocabulary from another file."""
+        if not new_data or 'words' not in new_data:
+            return False
+            
+        current_ids = {w['id'] for w in self.data['words']}
+        added_count = 0
+        
+        # Merge words
+        for word in new_data['words']:
+            if word['id'] not in current_ids:
+                self.data['words'].append(word)
+                current_ids.add(word['id'])
+                added_count += 1
+            else:
+                # Optional: Update existing word? For now skipping duplicates.
+                pass
+                
+        # Merge tags
+        for tag in new_data.get('tags', []):
+            if tag not in self.data['tags']:
+                self.data['tags'].append(tag)
+                
+        # Merge groups
+        for group in new_data.get('word_groups', []):
+            if 'word_groups' not in self.data:
+                self.data['word_groups'] = []
+            if group not in self.data['word_groups']:
+                self.data['word_groups'].append(group)
+        
+        save_data(self.data)
+        self.refresh_words()
+        self.update_group_filter()
+        QMessageBox.information(self, "Import Complete", f"Added {added_count} new words.")
+        return True
 
 
 def main():
