@@ -1,10 +1,10 @@
 [Setup]
 AppName=Arabic Vocabulary
-AppVersion=0.2 Beta
+AppVersion=0.3 Beta
 AppPublisher=Arabic Vocabulary
 DefaultDirName={autopf}\Arabic Vocabulary
 DefaultGroupName=Arabic Vocabulary
-OutputBaseFilename=ArabicVocabulary-0.2-beta-Setup
+OutputBaseFilename=ArabicVocabulary-0.3-beta-Setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
