@@ -4,7 +4,7 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
 
 ![PyQt6](https://img.shields.io/badge/PyQt6-6.6.1-green)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
-![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows-lightgrey)
+![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)
 
 ## Download
 
@@ -12,8 +12,9 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
 
 | Platform | Download |
 |----------|----------|
-| macOS | `ArabicVocabulary-0.1-beta-Mac.zip` |
-| Windows | `ArabicVocabulary-0.1-beta-Windows.zip` |
+| macOS | `ArabicVocabulary-0.2-beta-Mac.zip` |
+| Windows | `ArabicVocabulary-0.2-beta-Windows.zip` |
+| Linux | `ArabicVocabulary-0.2-beta-Linux.zip` |
 
 ## Features
 
@@ -28,7 +29,7 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
 ## Installation
 
 ### macOS
-1. Download `ArabicVocabulary-0.1-beta-Mac.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
+1. Download `ArabicVocabulary-0.2-beta-Mac.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
 2. Open the DMG and drag the app to Applications
 3. On first launch, macOS will block the app (it's not code-signed)
 4. Go to **System Settings → Privacy & Security**
@@ -36,10 +37,19 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
 6. Enter your admin password when prompted
 
 ### Windows
-1. Download `ArabicVocabulary-0.1-beta-Windows.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
+1. Download `ArabicVocabulary-0.2-beta-Windows.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
 2. Run the installer
 3. If SmartScreen appears, click "More info" → "Run anyway"
 4. Launch from Start Menu or Desktop shortcut
+
+### Linux
+1. Download `ArabicVocabulary-0.2-beta-Linux.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
+2. Extract and run:
+   ```bash
+   tar -xzvf ArabicVocabulary-0.2-beta-Linux.tar.gz
+   cd ArabicVocabulary && ./ArabicVocabulary
+   ```
+3. Install dependencies if needed: `sudo apt-get install libxcb-xinerama0 libxcb-cursor0`
 
 ### From Source
 1. Clone this repository
