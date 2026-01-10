@@ -2,7 +2,6 @@
 
 A native desktop application for learning Arabic vocabulary with Danish and English translations.
 
-![PyQt6](https://img.shields.io/badge/PyQt6-6.6.1-green)
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
 ![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)
 
@@ -12,31 +11,18 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
 
 | Platform | Download |
 |----------|----------|
-| macOS | `ArabicVocabulary-0.4.1-beta-Mac.zip` |
-| Windows | `ArabicVocabulary-0.4.1-beta-Setup.exe` |
-| Linux | `ArabicVocabulary-0.4.1-beta-Linux.tar.gz` |
+| macOS | `ArabicVocabulary-0.5.0-Mac.zip` |
+| Windows | `ArabicVocabulary-0.5.0-Windows.zip` |
 
-## What's New in v0.4.1
+## What's New in v0.5.0
 
-- **⚙️ Settings Menu** - Manage your app preferences
-- **📤 Import/Export**
-  - Export your vocabulary list to JSON
-  - Import lists from friends (merges safely with your data)
-- **🌍 Language Selection**
-  - Choose up to 2 active languages to display cards
-  - Support for English, Danish, German, Spanish, Russian, Italian
-  - Add your own custom languages!
-
-## What's New in v0.3
-
-- **📝 Quiz Mode** - Test your knowledge with interactive quizzes
-  - Choose to guess Arabic from English/Danish or vice versa
-  - Filter quiz by tag or use all words
-  - Score tracking with feedback
-- **📚 Sidebar Navigation** - Collapsible sidebar to switch between Library and Quiz modes
-- **Grammar Grouping** - Group related verb conjugations together
-  - Track person, number, gender, tense, and verb form
-  - Filter by word groups to see all conjugations together
+- **🎨 Modern Redesigned UI** - Clean, friendly interface
+- **⚙️ Settings Modal** - Language selection (up to 2 languages)
+- **📤 Import/Export** - Import and export vocabulary as JSON
+- **📝 Grammar Fields** - Person, number, gender, tense, verb form
+- **📂 Word Groups** - Link related conjugations together
+- **🎮 Quiz with Tag Filter** - Filter quiz questions by tag
+- **⌨️ Arabic Virtual Keyboard** - Full keyboard with diacritics
 
 ## Features
 
@@ -62,19 +48,15 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
 6. Enter your admin password when prompted
 
 ### Windows
-1. Download `ArabicVocabulary-0.3-beta-Windows.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
-2. Run the installer
-3. If SmartScreen appears, click "More info" → "Run anyway"
-4. Launch from Start Menu or Desktop shortcut
+1. Download `ArabicVocabulary-0.5.0-Windows.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
+2. Extract to any folder
+3. Run `ArabicVocabulary.exe`
+4. If SmartScreen appears, click "More info" → "Run anyway"
 
-### Linux
-1. Download `ArabicVocabulary-0.3-beta-Linux.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
-2. Extract and run:
-   ```bash
-   tar -xzvf ArabicVocabulary-0.3-beta-Linux.tar.gz
-   cd ArabicVocabulary && ./ArabicVocabulary
-   ```
-3. Install dependencies if needed: `sudo apt-get install libxcb-xinerama0 libxcb-cursor0`
+### macOS
+1. Download `ArabicVocabulary-0.5.0-Mac.zip` from [Releases](https://github.com/mikkelhappymates/arabic-vocabulary/releases)
+2. Extract and open `Arabic Vocabulary.app`
+3. If blocked, go to System Preferences → Security & Privacy → "Open Anyway"
 
 ### From Source
 1. Clone this repository
@@ -84,8 +66,20 @@ A native desktop application for learning Arabic vocabulary with Danish and Engl
    ```
 3. Run:
    ```bash
-   python3 main.py
+   python desktop_app.py
    ```
+
+### Building from Source
+
+**Windows:**
+```bash
+pyinstaller -y --clean ArabicVocabularyWeb.spec
+```
+
+**macOS:**
+```bash
+pyinstaller -y --clean ArabicVocabularyMac.spec
+```
 
 ### Adding Words
 
