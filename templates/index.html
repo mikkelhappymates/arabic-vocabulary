@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arabic Vocabulary</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/keyboard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
@@ -19,6 +20,18 @@
                     <span class="logo-text">Vocabulary</span>
                 </h1>
                 <div class="header-actions">
+                    <button class="btn btn-outline" id="settingsBtn" title="Settings">
+                        ⚙️ Settings
+                    </button>
+                    <button class="btn btn-outline" id="importBtn" title="Import Data">
+                        ⬆️ Import
+                    </button>
+                    <button class="btn btn-outline" id="exportBtn" title="Download Data">
+                        ⬇️ Export
+                    </button>
+                    <button class="btn btn-secondary" id="quizBtn">
+                        🎮 Quiz
+                    </button>
                     <button class="btn btn-primary" id="addWordBtn">
                         <span class="btn-icon">+</span>
                         Add Word
@@ -33,9 +46,12 @@
                 <input type="text" id="searchInput" placeholder="Search words..." class="search-input">
                 <span class="search-icon">🔍</span>
             </div>
-            <div class="tag-filter">
+            <div class="filter-group">
                 <select id="tagFilter" class="tag-select">
                     <option value="">All Tags</option>
+                </select>
+                <select id="wordGroupFilter" class="tag-select">
+                    <option value="">All Groups</option>
                 </select>
             </div>
         </div>
@@ -95,6 +111,73 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="wordGroupInput">Word Group (for conjugations)</label>
+                        <div class="tags-input-container">
+                            <input type="text" id="wordGroupInput" class="form-input" list="wordGroupsList" placeholder="e.g., كتب (to write)">
+                            <datalist id="wordGroupsList"></datalist>
+                        </div>
+                    </div>
+
+                    <!-- Grammar Section -->
+                    <details class="grammar-section">
+                        <summary class="grammar-toggle">Grammar Details (optional)</summary>
+                        <div class="grammar-grid">
+                            <div class="form-group">
+                                <label for="grammarPerson">Person</label>
+                                <select id="grammarPerson" class="form-input">
+                                    <option value="">-</option>
+                                    <option value="1st Person">1st Person</option>
+                                    <option value="2nd Person">2nd Person</option>
+                                    <option value="3rd Person">3rd Person</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="grammarNumber">Number</label>
+                                <select id="grammarNumber" class="form-input">
+                                    <option value="">-</option>
+                                    <option value="Singular">Singular</option>
+                                    <option value="Dual">Dual</option>
+                                    <option value="Plural">Plural</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="grammarGender">Gender</label>
+                                <select id="grammarGender" class="form-input">
+                                    <option value="">-</option>
+                                    <option value="Masculine">Masculine</option>
+                                    <option value="Feminine">Feminine</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="grammarTense">Tense</label>
+                                <select id="grammarTense" class="form-input">
+                                    <option value="">-</option>
+                                    <option value="Past">Past</option>
+                                    <option value="Present">Present</option>
+                                    <option value="Future">Future</option>
+                                    <option value="Imperative">Imperative</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="grammarForm">Verb Form</label>
+                                <select id="grammarForm" class="form-input">
+                                    <option value="">-</option>
+                                    <option value="Form I">Form I</option>
+                                    <option value="Form II">Form II</option>
+                                    <option value="Form III">Form III</option>
+                                    <option value="Form IV">Form IV</option>
+                                    <option value="Form V">Form V</option>
+                                    <option value="Form VI">Form VI</option>
+                                    <option value="Form VII">Form VII</option>
+                                    <option value="Form VIII">Form VIII</option>
+                                    <option value="Form IX">Form IX</option>
+                                    <option value="Form X">Form X</option>
+                                </select>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="form-group">
                         <label for="tagsInput">Tags</label>
                         <div class="tags-input-container" id="tagsInputContainer">
                             <div class="selected-tags" id="selectedTags"></div>
@@ -110,10 +193,131 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
                         <button type="submit" class="btn btn-primary">Save Word</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Quiz Modal -->
+        <div class="modal" id="quizModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content quiz-content">
+                <div class="modal-header">
+                    <h2>Quiz Time</h2>
+                    <button class="modal-close" id="closeQuizModal">&times;</button>
+                </div>
+                
+                <div id="quizStartView">
+                    <p style="margin-bottom: 20px; font-size: 1.1rem; color: var(--text-secondary);">
+                        Test your knowledge! Select a mode to start.
+                    </p>
+                    <div class="form-group">
+                        <label>Filter by Tag (optional)</label>
+                        <select id="quizTagFilter" class="form-input">
+                            <option value="">All Words</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Question Type</label>
+                        <div class="quiz-options-select">
+                            <button class="btn btn-outline quiz-mode-btn active" data-mode="ar-en">Arabic → English</button>
+                            <button class="btn btn-outline quiz-mode-btn" data-mode="en-ar">English → Arabic</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="startQuizBtn" style="width: 100%;">Start Quiz</button>
+                </div>
+
+                <div id="quizGameView" style="display: none;">
+                    <div class="quiz-progress">
+                        <div class="progress-bar"><div class="progress-fill" id="quizProgress"></div></div>
+                        <span id="quizCounter">1/10</span>
+                    </div>
+
+                    <div class="quiz-question-container">
+                        <h3 class="quiz-question-label">Translate this word:</h3>
+                        <div class="quiz-question-word" id="quizQuestionWord">...</div>
+                    </div>
+
+                    <div class="quiz-options-grid" id="quizOptions">
+                        <!-- Options will be injected here -->
+                    </div>
+                    
+                    <div id="quizFeedback" class="quiz-feedback" style="display: none;">
+                        <div class="feedback-content">
+                            <h3 id="feedbackTitle">Correct!</h3>
+                            <p id="feedbackText" class="feedback-answer"></p>
+                        </div>
+                        <button class="btn btn-primary" id="nextQuestionBtn">Next</button>
+                    </div>
+                </div>
+
+                <div id="quizResultView" style="display: none; text-align: center;">
+                    <div class="result-score" id="resultScore">0%</div>
+                    <h3>Quiz Complete!</h3>
+                    <p id="resultMessage">Great job!</p>
+                    <button class="btn btn-secondary" id="restartQuizBtn" style="margin-top: 20px;">Play Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Settings</h2>
+                    <button class="modal-close" id="closeSettingsModal">&times;</button>
+                </div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>Translation Languages (select up to 2)</label>
+                        <p class="form-hint">These languages will be shown on word cards.</p>
+                        <div class="language-checkboxes" id="languageCheckboxes">
+                            <!-- Languages will be injected here -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="customLanguageInput">Add Custom Language</label>
+                        <div class="custom-lang-row">
+                            <input type="text" id="customLanguageInput" class="form-input" placeholder="e.g., Hindi">
+                            <button type="button" class="btn btn-secondary" id="addCustomLanguageBtn">Add</button>
+                        </div>
+                        <div class="custom-languages-list" id="customLanguagesList"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Modal -->
+        <div class="modal" id="importModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Import Data</h2>
+                    <button class="modal-close" id="closeImportModal">&times;</button>
+                </div>
+                <div class="import-form">
+                    <p class="form-hint">Upload a vocabulary JSON file to import words.</p>
+                    <div class="form-group">
+                        <label for="importFileInput">Select JSON File</label>
+                        <input type="file" id="importFileInput" accept=".json" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="mergeImportCheckbox">
+                            <span>Merge with existing data (instead of replacing)</span>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancelImportBtn">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmImportBtn">Import</button>
+                    </div>
+                </div>
             </div>
         </div>
 

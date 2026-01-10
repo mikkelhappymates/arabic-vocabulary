@@ -1,0 +1,118 @@
+/* Keyboard Styles */
+.arabic-keyboard {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-card);
+    border-top: 2px solid var(--border-color);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+    z-index: 2000;
+    padding-bottom: 20px;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.arabic-keyboard.active {
+    transform: translateY(0);
+}
+
+.keyboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: var(--duo-gray-face);
+    border-bottom: 2px solid var(--border-color);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    font-weight: 800;
+    color: var(--text-secondary);
+}
+
+.keyboard-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.keyboard-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap; 
+}
+
+.key {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 3px 0 var(--border-color);
+    color: var(--text-primary);
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    font-size: 1.4rem;
+    min-width: 40px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.1s;
+    user-select: none;
+}
+
+.key:active {
+    transform: translateY(3px);
+    box-shadow: none;
+    background-color: var(--duo-gray-face);
+}
+
+.keyui-font {
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.key-space {
+    width: 150px;
+    font-family: inherit;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.key-backspace {
+    width: 60px;
+    color: var(--duo-red-face);
+}
+
+.diacritics-row {
+    margin-top: 10px;
+    align-items: center;
+    gap: 10px;
+}
+
+.diacritics-label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--text-light);
+    text-transform: uppercase;
+}
+
+.key-diacritic {
+    min-width: 36px;
+    height: 36px;
+    font-size: 1.6rem;
+    color: var(--duo-blue-face);
+}

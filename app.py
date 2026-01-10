@@ -1,5 +1,6 @@
 """
 Arabic Vocabulary App - Flask Backend
+Version 0.5.0 - Full Feature Web App
 """
 import json
 import os
@@ -12,11 +13,30 @@ app = Flask(__name__)
 
 # Configuration
 DATA_FILE = os.path.join(os.path.dirname(__file__), 'data', 'vocabulary.json')
+SETTINGS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'settings.json')
 IMAGES_FOLDER = os.path.join(os.path.dirname(__file__), 'data', 'images')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
-# Ensure images folder exists
+# Available languages
+AVAILABLE_LANGUAGES = [
+    "English", "Danish", "Swedish", "Norwegian", "German", 
+    "French", "Spanish", "Italian", "Dutch", "Portuguese",
+    "Russian", "Turkish", "Urdu", "Indonesian", "Malay"
+]
+
+# Grammar options
+GRAMMAR_OPTIONS = {
+    "person": ["", "1st Person", "2nd Person", "3rd Person"],
+    "number": ["", "Singular", "Dual", "Plural"],
+    "gender": ["", "Masculine", "Feminine"],
+    "tense": ["", "Past", "Present", "Future", "Imperative"],
+    "form": ["", "Form I", "Form II", "Form III", "Form IV", "Form V", 
+             "Form VI", "Form VII", "Form VIII", "Form IX", "Form X"]
+}
+
+# Ensure folders exist
 os.makedirs(IMAGES_FOLDER, exist_ok=True)
+os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
 
 
 def load_data():
@@ -25,7 +45,7 @@ def load_data():
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
-        return {"words": [], "tags": []}
+        return {"words": [], "tags": [], "word_groups": []}
 
 
 def save_data(data):
@@ -33,6 +53,24 @@ def save_data(data):
     os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def load_settings():
+    """Load settings from JSON file."""
+    try:
+        with open(SETTINGS_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {
+            "languages": ["English", "Danish"],
+            "custom_languages": []
+        }
+
+
+def save_settings(settings):
+    """Save settings to JSON file."""
+    with open(SETTINGS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(settings, f, ensure_ascii=False, indent=2)
 
 
 def allowed_file(filename):
@@ -87,6 +125,9 @@ def add_word():
         "tags": word_data.get('tags', []),
         "image": word_data.get('image'),
         "notes": word_data.get('notes', ''),
+        "word_group": word_data.get('word_group', ''),
+        "grammar": word_data.get('grammar', {}),
+        "translations": word_data.get('translations', {}),
         "created_at": now,
         "updated_at": now
     }
@@ -115,6 +156,9 @@ def update_word(word_id):
                 "tags": word_data.get('tags', word.get('tags', [])),
                 "image": word_data.get('image', word.get('image')),
                 "notes": word_data.get('notes', word.get('notes', '')),
+                "word_group": word_data.get('word_group', word.get('word_group', '')),
+                "grammar": word_data.get('grammar', word.get('grammar', {})),
+                "translations": word_data.get('translations', word.get('translations', {})),
                 "updated_at": now
             })
             save_data(data)
@@ -200,6 +244,123 @@ def upload_image():
 def serve_image(filename):
     """Serve uploaded images."""
     return send_from_directory(IMAGES_FOLDER, filename)
+
+
+@app.route('/api/export', methods=['GET'])
+def export_data():
+    """Export vocabulary data as JSON."""
+    return send_from_directory(os.path.dirname(DATA_FILE), os.path.basename(DATA_FILE), as_attachment=True)
+
+
+@app.route('/api/import', methods=['POST'])
+def import_data():
+    """Import vocabulary data from JSON file."""
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No file selected"}), 400
+    
+    if not file.filename.endswith('.json'):
+        return jsonify({"error": "Only JSON files are allowed"}), 400
+    
+    try:
+        content = file.read().decode('utf-8')
+        imported_data = json.loads(content)
+        
+        # Validate structure
+        if 'words' not in imported_data:
+            return jsonify({"error": "Invalid format: missing 'words' array"}), 400
+        
+        # Merge or replace based on query param
+        merge = request.args.get('merge', 'false').lower() == 'true'
+        
+        if merge:
+            current_data = load_data()
+            existing_ids = {w['id'] for w in current_data['words']}
+            
+            for word in imported_data.get('words', []):
+                if word.get('id') not in existing_ids:
+                    current_data['words'].append(word)
+            
+            # Merge tags
+            for tag in imported_data.get('tags', []):
+                if tag not in current_data.get('tags', []):
+                    current_data.setdefault('tags', []).append(tag)
+            
+            # Merge word groups
+            for group in imported_data.get('word_groups', []):
+                if group not in current_data.get('word_groups', []):
+                    current_data.setdefault('word_groups', []).append(group)
+            
+            save_data(current_data)
+            return jsonify({"message": "Data merged successfully", "word_count": len(current_data['words'])})
+        else:
+            save_data(imported_data)
+            return jsonify({"message": "Data imported successfully", "word_count": len(imported_data.get('words', []))})
+        
+    except json.JSONDecodeError:
+        return jsonify({"error": "Invalid JSON file"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/settings', methods=['GET'])
+def get_settings():
+    """Get app settings."""
+    settings = load_settings()
+    return jsonify({
+        **settings,
+        "available_languages": AVAILABLE_LANGUAGES,
+        "grammar_options": GRAMMAR_OPTIONS
+    })
+
+
+@app.route('/api/settings', methods=['PUT'])
+def update_settings():
+    """Update app settings."""
+    settings_data = request.json
+    
+    current_settings = load_settings()
+    
+    # Update languages (max 2)
+    if 'languages' in settings_data:
+        languages = settings_data['languages'][:2]  # Max 2 languages
+        current_settings['languages'] = languages
+    
+    # Update custom languages
+    if 'custom_languages' in settings_data:
+        current_settings['custom_languages'] = settings_data['custom_languages']
+    
+    save_settings(current_settings)
+    return jsonify(current_settings)
+
+
+@app.route('/api/word-groups', methods=['GET'])
+def get_word_groups():
+    """Get all word groups."""
+    data = load_data()
+    return jsonify(data.get('word_groups', []))
+
+
+@app.route('/api/word-groups', methods=['POST'])
+def add_word_group():
+    """Add a new word group."""
+    data = load_data()
+    group_name = request.json.get('name', '').strip()
+    
+    if not group_name:
+        return jsonify({"error": "Group name is required"}), 400
+    
+    if 'word_groups' not in data:
+        data['word_groups'] = []
+    
+    if group_name not in data['word_groups']:
+        data['word_groups'].append(group_name)
+        save_data(data)
+    
+    return jsonify({"name": group_name}), 201
 
 
 if __name__ == '__main__':
