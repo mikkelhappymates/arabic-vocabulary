@@ -1,22 +1,22 @@
 [Setup]
 AppName=Arabic Vocabulary
-AppVersion=0.4.1 Beta
+AppVersion=0.5.0
 AppPublisher=Arabic Vocabulary
 DefaultDirName={autopf}\Arabic Vocabulary
 DefaultGroupName=Arabic Vocabulary
-OutputBaseFilename=ArabicVocabulary-0.4.1-beta-Setup
+OutputBaseFilename=ArabicVocabulary-0.5.0-Setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 SetupIconFile=assets\icon.ico
-UninstallDisplayIcon={app}\Arabic Vocabulary.exe
+UninstallDisplayIcon={app}\ArabicVocabulary.exe
 
 [Files]
-Source: "dist\Arabic Vocabulary\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "dist\ArabicVocabulary\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
-Name: "{group}\Arabic Vocabulary"; Filename: "{app}\Arabic Vocabulary.exe"
-Name: "{commondesktop}\Arabic Vocabulary"; Filename: "{app}\Arabic Vocabulary.exe"
+Name: "{group}\Arabic Vocabulary"; Filename: "{app}\ArabicVocabulary.exe"
+Name: "{commondesktop}\Arabic Vocabulary"; Filename: "{app}\ArabicVocabulary.exe"
 
 [Run]
-Filename: "{app}\Arabic Vocabulary.exe"; Description: "Launch Arabic Vocabulary"; Flags: postinstall nowait skipifsilent
+Filename: "{app}\ArabicVocabulary.exe"; Description: "Launch Arabic Vocabulary"; Flags: postinstall nowait skipifsilent
