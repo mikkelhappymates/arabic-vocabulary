@@ -1,6 +1,6 @@
 """
 Arabic Vocabulary App - Flask Backend
-Version 0.5.1 - Full Feature Web App
+Version 0.5 - Full Feature Web App
 """
 import json
 import os
