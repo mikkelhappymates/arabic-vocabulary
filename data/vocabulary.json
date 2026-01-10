@@ -106,6 +106,546 @@
       "word_group": "",
       "grammar": {},
       "translations": {}
+    },
+    {
+      "id": "1",
+      "arabic": "مرحبا",
+      "arabic_diacritics": "",
+      "transliteration": "mar7aba",
+      "english": "hello",
+      "danish": "hej",
+      "tags": [
+        "greetings"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "Common greeting",
+      "created_at": "2026-01-09T23:07:46.858256Z",
+      "updated_at": "2026-01-09T23:07:46.858256Z"
+    },
+    {
+      "id": "2",
+      "arabic": "شكرا",
+      "transliteration": "shukran",
+      "english": "thank you",
+      "danish": "tak",
+      "tags": [
+        "greetings"
+      ],
+      "notes": "",
+      "grammar": {}
+    },
+    {
+      "id": "3",
+      "arabic": "نعم",
+      "arabic_diacritics": "",
+      "transliteration": "na3am",
+      "english": "yes",
+      "danish": "ja",
+      "tags": [
+        "basics"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:07:38.002173Z",
+      "updated_at": "2026-01-09T23:07:38.002173Z"
+    },
+    {
+      "id": "5",
+      "arabic": "ماء",
+      "arabic_diacritics": "",
+      "transliteration": "maa2",
+      "english": "water",
+      "danish": "vand",
+      "tags": [
+        "food & drink"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:24:42.146286Z",
+      "updated_at": "2026-01-09T23:24:42.146286Z"
+    },
+    {
+      "id": "248765c0-37de-4bd3-ada0-43c2476fc889",
+      "arabic": "كلب",
+      "arabic_diacritics": "كَلْب",
+      "transliteration": "kalb",
+      "english": "dog",
+      "danish": "hund",
+      "tags": [
+        "animal"
+      ],
+      "grammar": {
+        "group": "كلب",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T22:54:02.113646Z",
+      "updated_at": "2026-01-09T22:54:02.113646Z"
+    },
+    {
+      "id": "a47e489f-5535-4096-ab87-5182e708b1e4",
+      "arabic": "مكلة",
+      "arabic_diacritics": "مَلِكة",
+      "transliteration": "malika",
+      "english": "Queen",
+      "danish": "dronning",
+      "tags": [
+        "title"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T22:58:20.519942Z",
+      "updated_at": "2026-01-09T22:58:20.519942Z"
+    },
+    {
+      "id": "53ce3606-a9f2-4bef-a88f-ce0df79abb97",
+      "arabic": "جديد",
+      "arabic_diacritics": "جَديد",
+      "transliteration": "Jadiid",
+      "english": "new",
+      "danish": "ny",
+      "tags": [
+        "basics"
+      ],
+      "grammar": {
+        "group": "جديد",
+        "person": "",
+        "number": "",
+        "gender": "masculine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T22:59:36.270149Z",
+      "updated_at": "2026-01-09T23:01:26.078214Z"
+    },
+    {
+      "id": "2bd425b2-e8ed-4ab3-b271-678b0711b60a",
+      "arabic": "كبير",
+      "arabic_diacritics": "كَبير",
+      "transliteration": "kabir",
+      "english": "big, older, old",
+      "danish": "stor, ældre, gammel",
+      "tags": [
+        "basics"
+      ],
+      "grammar": {
+        "group": "كبير",
+        "person": "",
+        "number": "",
+        "gender": "masculine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:01:11.213219Z",
+      "updated_at": "2026-01-09T23:01:11.213219Z"
+    },
+    {
+      "id": "cea3fd16-4662-401b-b426-51ec8e5ddf01",
+      "arabic": "حبيبتي",
+      "arabic_diacritics": "حَبيبتي",
+      "transliteration": "7abibti",
+      "english": "my beloved",
+      "danish": "min elskede",
+      "tags": [
+        "greetings",
+        "basics"
+      ],
+      "grammar": {
+        "group": "حبيبي",
+        "person": "",
+        "number": "",
+        "gender": "feminine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:04:34.504282Z",
+      "updated_at": "2026-01-09T23:04:34.504282Z"
+    },
+    {
+      "id": "6c8c7798-0939-4116-9097-9069d518579c",
+      "arabic": "هو",
+      "arabic_diacritics": "هُوَّ",
+      "transliteration": "hua",
+      "english": "he",
+      "danish": "han",
+      "tags": [
+        "basics"
+      ],
+      "grammar": {
+        "group": "هو",
+        "person": "",
+        "number": "",
+        "gender": "masculine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:06:26.818596Z",
+      "updated_at": "2026-01-09T23:06:26.818596Z"
+    },
+    {
+      "id": "ed6ca7bd-556f-4688-8ac8-e2304b2c8989",
+      "arabic": "هي",
+      "arabic_diacritics": "هِيَّ",
+      "transliteration": "hiya",
+      "english": "she",
+      "danish": "hun",
+      "tags": [
+        "basics"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "feminine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:07:19.597267Z",
+      "updated_at": "2026-01-09T23:07:19.597267Z"
+    },
+    {
+      "id": "a576ce36-9170-4299-860f-5f7e27a9ea1d",
+      "arabic": "فرنسي",
+      "arabic_diacritics": "فَرَنْسِتّ",
+      "transliteration": "Faransiy",
+      "english": "(is) french",
+      "danish": "(er) fransk",
+      "tags": [
+        "nationality",
+        "ethnicity",
+        "language"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:09:55.288405Z",
+      "updated_at": "2026-01-09T23:18:05.066656Z"
+    },
+    {
+      "id": "bac759ad-1d0b-4b47-9966-4dabebd7e834",
+      "arabic": "باريس",
+      "arabic_diacritics": "باريس",
+      "transliteration": "baris",
+      "english": "Paris",
+      "danish": "Paris",
+      "tags": [
+        "city"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:11:12.923750Z",
+      "updated_at": "2026-01-09T23:11:12.923750Z"
+    },
+    {
+      "id": "9e100bcd-38c2-4f58-827f-356a43f4eb32",
+      "arabic": "جدا",
+      "arabic_diacritics": "جِدّاً",
+      "transliteration": "jiddan",
+      "english": "very",
+      "danish": "meget",
+      "tags": [
+        "adjective"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:16:13.375585Z",
+      "updated_at": "2026-01-09T23:16:13.375585Z"
+    },
+    {
+      "id": "d2e10223-81ac-48b4-bad1-d64062dfe98c",
+      "arabic": "عربي",
+      "arabic_diacritics": "عَرَبْي",
+      "transliteration": "3arabii",
+      "english": "arabic",
+      "danish": "arabisk",
+      "tags": [
+        "language",
+        "ethnicity"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:17:47.315752Z",
+      "updated_at": "2026-01-09T23:30:36.556284Z"
+    },
+    {
+      "id": "cc58b39c-824a-4504-ae0f-999222c7cc0f",
+      "arabic": "دكتور",
+      "arabic_diacritics": "دُكْتور",
+      "transliteration": "duktur",
+      "english": "doctor",
+      "danish": "doktor",
+      "tags": [
+        "job",
+        "description",
+        "title"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "masculine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:19:29.485145Z",
+      "updated_at": "2026-01-09T23:19:29.485145Z"
+    },
+    {
+      "id": "65ae408f-2f6c-4110-947d-55ca3b882fe3",
+      "arabic": "امرأة",
+      "arabic_diacritics": "اِمْرَأة",
+      "transliteration": "imra2a",
+      "english": "woman",
+      "danish": "kvinde",
+      "tags": [
+        "basics",
+        "description"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "feminine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:22:36.108298Z",
+      "updated_at": "2026-01-09T23:22:36.108298Z"
+    },
+    {
+      "id": "68901b3a-28b3-4e7e-b3d5-9a551762e258",
+      "arabic": "أين",
+      "arabic_diacritics": "أَيْن",
+      "transliteration": "2ain",
+      "english": "where",
+      "danish": "hvor",
+      "tags": [
+        "basics"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:23:44.673205Z",
+      "updated_at": "2026-01-09T23:23:44.673205Z"
+    },
+    {
+      "id": "4",
+      "arabic": "لا",
+      "transliteration": "la",
+      "english": "no",
+      "danish": "nej",
+      "tags": [
+        "basics"
+      ],
+      "notes": "",
+      "grammar": {}
+    },
+    {
+      "id": "5c463c71-2237-4a2f-b1e7-691200c50b5a",
+      "arabic": "غريب",
+      "arabic_diacritics": "غَريب",
+      "transliteration": "gharib",
+      "english": "wierd",
+      "danish": "mærkeligt",
+      "tags": [
+        "description"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:12:35.877801Z",
+      "updated_at": "2026-01-09T23:12:35.877801Z"
+    },
+    {
+      "id": "2769b2f6-841a-4eba-be67-a1d01c2006fc",
+      "arabic": "معلم",
+      "arabic_diacritics": "مُعَلِّم",
+      "transliteration": "mu3allim",
+      "english": "teacher",
+      "danish": "lærer",
+      "tags": [
+        "job",
+        "description"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "masculine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:14:26.825931Z",
+      "updated_at": "2026-01-09T23:32:44.186143Z"
+    },
+    {
+      "id": "22b9b933-d87a-472e-80c1-7546eab15477",
+      "arabic": "ولد",
+      "arabic_diacritics": "وَلَد",
+      "transliteration": "walad",
+      "english": "boy",
+      "danish": "dreng",
+      "tags": [
+        "description",
+        "basics"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "masculine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:20:33.832252Z",
+      "updated_at": "2026-01-09T23:20:33.832252Z"
+    },
+    {
+      "id": "13c51868-9d5b-40a4-b4c2-cd498fa26daf",
+      "arabic": "حبيبي",
+      "arabic_diacritics": "حَبيبي",
+      "transliteration": "7abibi",
+      "english": "my beloved, my friend,",
+      "danish": "min elskede, min ven",
+      "tags": [
+        "greetings",
+        "basics"
+      ],
+      "grammar": {
+        "group": "حبيبي",
+        "person": "",
+        "number": "",
+        "gender": "masculine",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-09T23:02:32.775319Z",
+      "updated_at": "2026-01-09T23:02:32.775319Z"
+    },
+    {
+      "id": "3e60cb0b-2b94-4e07-a14c-b1a8a61cee22",
+      "arabic": "الله اكبر",
+      "arabic_diacritics": "",
+      "transliteration": "",
+      "english": "god is the greatest",
+      "danish": "gud er størst",
+      "tags": [
+        "basics"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-10T01:52:59.253388Z",
+      "updated_at": "2026-01-10T17:14:26.423527Z"
+    },
+    {
+      "id": "8595aa2d-7087-4e19-8255-780a02e7537f",
+      "arabic": "الله",
+      "arabic_diacritics": "",
+      "transliteration": "",
+      "english": "God",
+      "danish": "Gud",
+      "tags": [
+        "basics"
+      ],
+      "grammar": {
+        "group": "",
+        "person": "",
+        "number": "",
+        "gender": "",
+        "tense": "",
+        "form": ""
+      },
+      "notes": "",
+      "created_at": "2026-01-10T01:54:29.345253Z",
+      "updated_at": "2026-01-10T01:54:29.345253Z"
     }
   ],
   "tags": [
@@ -113,6 +653,23 @@
     "basics",
     "nouns",
     "food",
-    "verbs"
+    "verbs",
+    "food & drink",
+    "animal",
+    "title",
+    "nationality",
+    "city",
+    "description",
+    "job",
+    "adjective",
+    "language",
+    "ethnicity"
+  ],
+  "word_groups": [
+    "كلب",
+    "جديد",
+    "كبير",
+    "حبيبي",
+    "هو"
   ]
 }

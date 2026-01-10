@@ -463,8 +463,34 @@ document.addEventListener('keydown', (e) => {
 });
 
 // --- Export Function ---
-document.getElementById('exportBtn').addEventListener('click', () => {
-    window.location.href = '/api/export';
+document.getElementById('exportBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch('/api/export');
+        const data = await response.json();
+        
+        // Check if running in pywebview (has pywebview API)
+        if (window.pywebview && window.pywebview.api) {
+            // Use native file dialog via pywebview
+            const result = await window.pywebview.api.save_export(data);
+            if (result) {
+                alert('Data exported successfully!');
+            }
+        } else {
+            // Fallback for browser: create blob and download
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vocabulary.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Failed to export data');
+    }
 });
 
 // --- Import Function ---

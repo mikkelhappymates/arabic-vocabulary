@@ -274,7 +274,8 @@ def serve_image(filename):
 @app.route('/api/export', methods=['GET'])
 def export_data():
     """Export vocabulary data as JSON."""
-    return send_from_directory(os.path.dirname(DATA_FILE), os.path.basename(DATA_FILE), as_attachment=True)
+    data = load_data()
+    return jsonify(data)
 
 
 @app.route('/api/import', methods=['POST'])
