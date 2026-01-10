@@ -1,9 +1,11 @@
 """
 Arabic Vocabulary App - Flask Backend
-Version 0.5.0 - Full Feature Web App
+Version 0.5.1 - Full Feature Web App
 """
 import json
 import os
+import sys
+import shutil
 import uuid
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, send_from_directory
@@ -11,10 +13,33 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# Configuration
-DATA_FILE = os.path.join(os.path.dirname(__file__), 'data', 'vocabulary.json')
-SETTINGS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'settings.json')
-IMAGES_FOLDER = os.path.join(os.path.dirname(__file__), 'data', 'images')
+# Configuration - Use AppData for user data when running as frozen executable
+def get_data_dir():
+    """Get the appropriate data directory based on how the app is running."""
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable - use AppData
+        appdata = os.environ.get('APPDATA', os.path.expanduser('~'))
+        data_dir = os.path.join(appdata, 'ArabicVocabulary')
+        
+        # Copy default data if it doesn't exist yet
+        bundled_data = os.path.join(os.path.dirname(sys.executable), '_internal', 'data')
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir, exist_ok=True)
+            # Copy vocabulary.json and settings.json if they exist in bundle
+            for filename in ['vocabulary.json', 'settings.json']:
+                bundled_file = os.path.join(bundled_data, filename)
+                if os.path.exists(bundled_file):
+                    shutil.copy2(bundled_file, os.path.join(data_dir, filename))
+        
+        return data_dir
+    else:
+        # Running from source - use local data folder
+        return os.path.join(os.path.dirname(__file__), 'data')
+
+DATA_DIR = get_data_dir()
+DATA_FILE = os.path.join(DATA_DIR, 'vocabulary.json')
+SETTINGS_FILE = os.path.join(DATA_DIR, 'settings.json')
+IMAGES_FOLDER = os.path.join(DATA_DIR, 'images')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 # Available languages
@@ -35,8 +60,8 @@ GRAMMAR_OPTIONS = {
 }
 
 # Ensure folders exist
+os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(IMAGES_FOLDER, exist_ok=True)
-os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
 
 
 def load_data():
