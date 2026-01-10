@@ -116,3 +116,13 @@
     font-size: 1.6rem;
     color: var(--duo-blue-face);
 }
+
+/* Dark Mode for Keyboard */
+[data-theme="dark"] .key {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .key:active {
+    background-color: var(--duo-gray-side);
+}

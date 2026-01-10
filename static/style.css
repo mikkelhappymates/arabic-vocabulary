@@ -1,7 +1,7 @@
 /* Arabic Vocabulary App - Modern Design */
 
 :root {
-    /* Color Palette */
+    /* Color Palette - Light Mode */
     --duo-green-face: #58CC02;
     --duo-green-side: #58A700;
     --duo-blue-face: #1CB0F6;
@@ -13,6 +13,8 @@
     
     --bg-page: #FFFFFF;
     --bg-card: #FFFFFF;
+    --bg-input: #FFFFFF;
+    --bg-modal: #FFFFFF;
     --text-primary: #3C3C3C;
     --text-secondary: #777777;
     --text-light: #AFAFAF;
@@ -34,6 +36,22 @@
     --radius-xl: 20px;
 }
 
+/* Dark Mode */
+[data-theme="dark"] {
+    --duo-gray-face: #2D2D2D;
+    --duo-gray-side: #404040;
+    
+    --bg-page: #1A1A1A;
+    --bg-card: #242424;
+    --bg-input: #2D2D2D;
+    --bg-modal: #242424;
+    --text-primary: #EEEEEE;
+    --text-secondary: #AAAAAA;
+    --text-light: #777777;
+    
+    --border-color: #404040;
+}
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -43,9 +61,17 @@
 body {
     font-family: 'Nunito', sans-serif;
     background-color: var(--bg-page);
+    background-image: url('/static/bg-pattern-light.png');
+    background-repeat: repeat;
+    background-size: 300px;
     color: var(--text-primary);
     line-height: 1.5;
     min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] body {
+    background-image: url('/static/bg-pattern-dark.png');
 }
 
 .arabic-text {
@@ -64,8 +90,12 @@ body {
 /* Header */
 .header {
     margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
     padding-bottom: var(--spacing-md);
     border-bottom: 2px solid var(--border-color);
+    background-color: var(--bg-card);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .header-content {
@@ -1145,4 +1175,83 @@ details[open] .grammar-toggle::before {
     .language-checkboxes {
         grid-template-columns: 1fr;
     }
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    font-size: 1.4rem;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    background: var(--duo-gray-face);
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+    background: var(--duo-gray-side);
+}
+
+/* Dark Mode Additional Overrides */
+[data-theme="dark"] .modal-content {
+    background-color: var(--bg-modal);
+}
+
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .tag-select,
+[data-theme="dark"] .search-input {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .word-card {
+    background-color: var(--bg-card);
+}
+
+[data-theme="dark"] .btn-outline {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .quiz-option {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .grammar-section {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .grammar-toggle {
+    background: var(--duo-gray-face);
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .grammar-grid {
+    background: var(--bg-input);
+}
+
+[data-theme="dark"] .language-checkboxes {
+    background: var(--bg-input);
+}
+
+[data-theme="dark"] .checkbox-label:hover {
+    background: var(--duo-gray-face);
+}
+
+[data-theme="dark"] .import-form input[type="file"] {
+    background: var(--bg-input);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .quiz-feedback.correct {
+    background-color: #1e3a1e;
+    color: #58CC02;
+    border-color: #2d5a2d;
+}
+
+[data-theme="dark"] .quiz-feedback.wrong {
+    background-color: #3a1e1e;
+    color: #FF4B4B;
+    border-color: #5a2d2d;
 }
