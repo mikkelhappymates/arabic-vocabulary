@@ -1,6 +1,6 @@
 /**
  * Arabic Vocabulary App - Frontend JavaScript
- * Version 0.5.0 - Full Feature Web App
+ * Version 0.5.1 - Full Feature Web App
  */
 
 // State
@@ -32,6 +32,8 @@ const arabicKeyboard = document.getElementById('arabicKeyboard');
 const closeKeyboard = document.getElementById('closeKeyboard');
 const tagsInput = document.getElementById('tagsInput');
 const selectedTagsContainer = document.getElementById('selectedTags');
+const newTagInput = document.getElementById('newTagInput');
+const addNewTagBtn = document.getElementById('addNewTagBtn');
 
 // Form inputs
 const wordIdInput = document.getElementById('wordId');
@@ -120,9 +122,13 @@ async function saveWord(wordData) {
             closeModalHandler();
             fetchWords();
             fetchWordGroups(); // Refresh word groups in case a new one was added
+        } else {
+            const error = await response.json();
+            alert(error.error || "Failed to save word");
         }
     } catch (error) {
         console.error('Error saving word:', error);
+        alert("An error occurred while saving.");
     }
 }
 
@@ -423,6 +429,16 @@ tagsInput.addEventListener('change', (e) => {
     addSelectedTag(e.target.value);
 });
 
+if (addNewTagBtn) {
+    addNewTagBtn.addEventListener('click', () => {
+        const newTag = newTagInput.value.trim().toLowerCase();
+        if (newTag) {
+            addSelectedTag(newTag);
+            newTagInput.value = '';
+        }
+    });
+}
+
 // Keyboard toggle buttons
 document.querySelectorAll('.keyboard-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -681,6 +697,13 @@ const feedbackTitle = document.getElementById('feedbackTitle');
 const feedbackText = document.getElementById('feedbackText');
 const quizTagFilter = document.getElementById('quizTagFilter');
 
+// Matching Game State
+let matchSelectedCard = null;
+let matchPairsFound = 0;
+let matchTotalPairs = 0;
+let matchStartTime = 0;
+let matchMistakes = 0;
+
 // Buttons
 document.getElementById('quizBtn').addEventListener('click', () => {
     quizModal.classList.add('active');
@@ -722,22 +745,149 @@ function startQuiz() {
         pool = words.filter(w => w.tags && w.tags.includes(selectedTag));
     }
     
-    if (pool.length < 4) {
-        alert('You need at least 4 words' + (selectedTag ? ' with that tag' : '') + ' to start a quiz!');
+    // Check requirements based on mode
+    const minWords = quizMode === 'match' ? 5 : 4;
+    
+    if (pool.length < minWords) {
+        alert(`You need at least ${minWords} words` + (selectedTag ? ' with that tag' : '') + ' to start!');
         return;
     }
     
+    quizStartView.style.display = 'none';
+    quizResultView.style.display = 'none';
+    quizGameView.style.display = 'block';
+
+    if (quizMode === 'match') {
+        startMatchingGame(pool);
+    } else {
+        startStandardQuiz(pool);
+    }
+}
+
+function startStandardQuiz(pool) {
+    document.getElementById('standardQuizContainer').style.display = 'block';
+    document.getElementById('quizOptions').style.display = 'grid';
+    document.getElementById('matchingGameContainer').style.display = 'none';
+
     // Shuffle and pick up to 10
     const questionCount = Math.min(10, pool.length);
     quizQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, questionCount);
     currentQuestionIndex = 0;
     quizScore = 0;
     
-    quizStartView.style.display = 'none';
-    quizResultView.style.display = 'none';
-    quizGameView.style.display = 'block';
-    
     showQuestion();
+}
+
+function startMatchingGame(pool) {
+    document.getElementById('standardQuizContainer').style.display = 'none';
+    document.getElementById('quizOptions').style.display = 'none';
+    document.getElementById('matchingGameContainer').style.display = 'block';
+    
+    // Pick 5 words (or less if not enough)
+    const gameWords = [...pool].sort(() => 0.5 - Math.random()).slice(0, 5);
+    matchTotalPairs = gameWords.length;
+    matchPairsFound = 0;
+    matchMistakes = 0;
+    matchStartTime = Date.now();
+    
+    // Setup UI
+    quizCounter.textContent = `${matchPairsFound} / ${matchTotalPairs} Pairs`;
+    quizProgress.style.width = '0%';
+    
+    const grid = document.getElementById('matchingGrid');
+    grid.innerHTML = '';
+    
+    // Create pairs (1 English/Danish card, 1 Arabic card)
+    let cards = [];
+    gameWords.forEach(word => {
+        // Card 1: Meaning (English/Danish)
+        cards.push({
+            id: word.id,
+            type: 'meaning',
+            text: word.english || word.danish,
+            isArabic: false
+        });
+        
+        // Card 2: Arabic
+        cards.push({
+            id: word.id,
+            type: 'arabic',
+            text: word.arabic_diacritics || word.arabic,
+            isArabic: true
+        });
+    });
+    
+    // Shuffle cards
+    cards.sort(() => 0.5 - Math.random());
+    
+    // Render cards
+    cards.forEach(card => {
+        const div = document.createElement('div');
+        div.className = `match-card ${card.isArabic ? 'arabic-text' : ''}`;
+        div.textContent = card.text;
+        div.dataset.id = card.id;
+        div.addEventListener('click', () => handleCardClick(div, card));
+        grid.appendChild(div);
+    });
+}
+
+function handleCardClick(div, card) {
+    // Ignore if already matched or already selected
+    if (div.classList.contains('matched') || div.classList.contains('selected')) return;
+    
+    // If no card selected, select this one
+    if (!matchSelectedCard) {
+        div.classList.add('selected');
+        matchSelectedCard = { div, card };
+        return;
+    }
+    
+    // Second card selected
+    const first = matchSelectedCard;
+    div.classList.add('selected');
+    matchSelectedCard = null; // Clear selection for next turn
+    
+    // Check match
+    if (first.card.id === card.id) {
+        // MATCH!
+        setTimeout(() => {
+            first.div.classList.remove('selected');
+            div.classList.remove('selected');
+            first.div.classList.add('matched');
+            div.classList.add('matched');
+            
+            matchPairsFound++;
+            quizCounter.textContent = `${matchPairsFound} / ${matchTotalPairs} Pairs`;
+            quizProgress.style.width = `${(matchPairsFound / matchTotalPairs) * 100}%`;
+            
+            if (matchPairsFound === matchTotalPairs) {
+                setTimeout(showMatchGameWin, 500);
+            }
+        }, 300);
+    } else {
+        // NO MATCH
+        matchMistakes++;
+        first.div.classList.add('wrong');
+        div.classList.add('wrong');
+        
+        setTimeout(() => {
+            first.div.classList.remove('selected', 'wrong');
+            div.classList.remove('selected', 'wrong');
+        }, 1000);
+    }
+}
+
+function showMatchGameWin() {
+    quizGameView.style.display = 'none';
+    quizResultView.style.display = 'block';
+    
+    const timeTaken = ((Date.now() - matchStartTime) / 1000).toFixed(1);
+    
+    quizScoreDisplay.textContent = `${matchTotalPairs} Pairs`;
+    quizMessage.innerHTML = `Perfect Match! 🎉<br>
+        <span style="font-size: 0.8em; color: var(--text-secondary); margin-top: 10px; display: block;">
+            Time: ${timeTaken}s • Mistakes: ${matchMistakes}
+        </span>`;
 }
 
 function showQuestion() {

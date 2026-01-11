@@ -260,7 +260,76 @@ body {
     border-color: var(--duo-blue-face);
 }
 
+/* Matching Game */
+.matching-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.match-card {
+    background-color: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    box-shadow: 0 4px 0 var(--border-color);
+    user-select: none;
+}
+
+.match-card:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.match-card.arabic-text {
+    font-size: 1.6rem;
+}
+
+.match-card.selected {
+    border-color: var(--duo-blue-face);
+    background-color: var(--duo-blue-face);
+    color: white;
+    box-shadow: 0 4px 0 var(--duo-blue-side);
+}
+
+.match-card.matched {
+    border-color: var(--duo-green-face);
+    background-color: var(--duo-green-face);
+    color: white;
+    box-shadow: 0 4px 0 var(--duo-green-side);
+    cursor: default;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.match-card.wrong {
+    border-color: var(--duo-red-face);
+    background-color: var(--duo-red-face);
+    color: white;
+    box-shadow: 0 4px 0 var(--duo-red-side);
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
 /* Words Grid */
+
 .words-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

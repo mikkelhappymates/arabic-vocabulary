@@ -1,6 +1,6 @@
 """
 Arabic Vocabulary App - Flask Backend
-Version 0.5 - Full Feature Web App
+Version 0.5.1 - Full Feature Web App
 """
 import json
 import os
@@ -139,6 +139,11 @@ def add_word():
     data = load_data()
     word_data = request.json
     
+    # Check for duplicate arabic word
+    for word in data.get('words', []):
+        if word.get('arabic') == word_data.get('arabic', ''):
+            return jsonify({"error": "Word with this Arabic spelling already exists"}), 400
+
     now = datetime.utcnow().isoformat() + 'Z'
     new_word = {
         "id": str(uuid.uuid4()),

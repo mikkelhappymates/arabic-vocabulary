@@ -181,12 +181,16 @@
                     </details>
 
                     <div class="form-group">
-                        <label for="tagsInput">Tags</label>
+                        <label for="tagsInput">Tags (Category)</label>
                         <div class="tags-input-container" id="tagsInputContainer">
                             <div class="selected-tags" id="selectedTags"></div>
-                            <select id="tagsInput" class="form-input">
-                                <option value="">Select a tag...</option>
-                            </select>
+                            <div style="display: flex; gap: 8px;">
+                                <select id="tagsInput" class="form-input" style="flex: 1;">
+                                    <option value="">Select existing...</option>
+                                </select>
+                                <input type="text" id="newTagInput" class="form-input" placeholder="New category..." style="flex: 1;">
+                                <button type="button" class="btn btn-outline" id="addNewTagBtn">Add</button>
+                            </div>
                         </div>
                     </div>
 
@@ -227,6 +231,7 @@
                         <div class="quiz-options-select">
                             <button class="btn btn-outline quiz-mode-btn active" data-mode="ar-en">Arabic → English</button>
                             <button class="btn btn-outline quiz-mode-btn" data-mode="en-ar">English → Arabic</button>
+                            <button class="btn btn-outline quiz-mode-btn" data-mode="match">Match Pairs</button>
                         </div>
                     </div>
                     <button class="btn btn-primary" id="startQuizBtn" style="width: 100%;">Start Quiz</button>
@@ -238,13 +243,19 @@
                         <span id="quizCounter">1/10</span>
                     </div>
 
-                    <div class="quiz-question-container">
+                    <div class="quiz-question-container" id="standardQuizContainer">
                         <h3 class="quiz-question-label">Translate this word:</h3>
                         <div class="quiz-question-word" id="quizQuestionWord">...</div>
                     </div>
 
                     <div class="quiz-options-grid" id="quizOptions">
                         <!-- Options will be injected here -->
+                    </div>
+
+                    <div id="matchingGameContainer" style="display: none;">
+                        <div class="matching-grid" id="matchingGrid">
+                            <!-- Cards will be injected here -->
+                        </div>
                     </div>
                     
                     <div id="quizFeedback" class="quiz-feedback" style="display: none;">
